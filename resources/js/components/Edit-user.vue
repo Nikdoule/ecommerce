@@ -14,7 +14,7 @@
                     v-model="rolesTable"
                     :value="role.id"
                     :id="role.id"
-                    :checked="checked ? role.id == roleUserId : ''"
+                    
                   />
                 <label :for="role.id" class="form-check-label ml-5">{{ role.name }}</label>
               </div>

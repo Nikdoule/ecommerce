@@ -16,10 +16,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->middleware('verified')->group(function(){
     
-    Route::get('/', function () {
-        return view('welcome');
+    Route::namespace('Products')->group(function() {
+        Route::resource('products', 'ProductsController');
     });
-    
+    Route::get('/', 'Products\ProductsController@index');
+    Route::get('/products/{slug}', 'Products\ProductsController@show')->name('products.show');
+
     Route::namespace('Admin')->prefix('admin')->name('admin.')->middleware('can:manage-users')->group(function() {
         Route::resource('users', 'UsersController');
     });
@@ -31,9 +33,17 @@ Route::middleware('auth')->middleware('verified')->group(function(){
         Route::get('users', 'ProfilController@edit');
         
     });
-    
+
+    Route::get('/cart', 'CartController@index')->name('cart.index');
+
+    Route::post('/cart/add', 'CartController@store')->name('cart.store');
+
+    Route::post('/cart/{rowId}', 'CartController@destroy')->name('cart.destroy');
+
+    Route::get('/cart/delete', function() {
+        Cart::destroy();
+    });
     
 });
 
 Auth::routes(['verify' => true]);
-Route::get('/home', 'HomeController@index')->name('home');

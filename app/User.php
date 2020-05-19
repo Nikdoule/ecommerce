@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -17,7 +16,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'last_name', 'civility', 'phone'
+        'name', 'email', 'password', 'last_name', 'civility', 'phone', 'adress', 'city', 'zip_code'
     ];
 
     /**
@@ -53,5 +52,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->roles()->whereIn('name', $roles)->first();
     }
-    
+
+    public function adresses()
+    {
+        return $this->belongsTo('App\Adress');
+    }
 }

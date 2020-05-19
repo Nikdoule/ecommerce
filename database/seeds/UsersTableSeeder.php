@@ -26,6 +26,9 @@ class UsersTableSeeder extends Seeder
             'civility' =>'m',
             'phone' =>'0000000000',
             'email' =>'superadmin@admin.com',
+            'adress' =>'3 rue du poitou',
+            'city' =>'Liévin',
+            'zip_code' =>'62800',
             'password' =>Hash::make('123456789'),
         ]);
         $admin = User::create([
@@ -34,6 +37,9 @@ class UsersTableSeeder extends Seeder
             'civility' =>'m',
             'phone' =>'0000000000',
             'email' =>'admin@admin.com',
+            'adress' =>'3 rue du poitou',
+            'city' =>'Liévin',
+            'zip_code' =>'62800',
             'password' =>Hash::make('123456789'),
         ]);
         $guest = User::create([
@@ -42,6 +48,9 @@ class UsersTableSeeder extends Seeder
             'civility' =>'m',
             'phone' =>'0000000000',
             'email' =>'guest@guest.com',
+            'adress' =>'3 rue du poitou',
+            'city' =>'Liévin',
+            'zip_code' =>'62800',
             'password' =>Hash::make('123456789'),
         ]);
 

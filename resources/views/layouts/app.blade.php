@@ -35,11 +35,6 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto">
-
-                    </ul>
-
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
@@ -53,12 +48,17 @@
                         </li>
                         @endif
                         @else
+                        <div>
+                            
+                            <a href="{{ route('cart.index')}}">
+                                <img class="svg" src="/images/shopping-cart.svg" alt="cart">
+                                <span class="badge badge-pill badge-dark">{{ Cart::count() }}</span></a>
+                        </div>
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                {{ Auth::user()->name }} <span class="caret"></span>
+                                {{ Auth::user()->last_name }} <span class="caret"></span>
                             </a>
-
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -74,15 +74,14 @@
                                 @endcan
                                 <a class="dropdown-item" href="{{ route('edit.users') }}">Profil</a>
                             </div>
-
                         </li>
                         @endguest
                     </ul>
                 </div>
             </div>
         </nav>
-
         <main class="py-4">
+            @yield('content')
             @yield('verify')
             @yield('register')
             @yield('login')
@@ -90,6 +89,8 @@
             @yield('users')
             @yield('edit-user')
             @yield('edit-profil-user')
+            @yield('product')
+            @yield('cart')
         </main>
     </div>
 </body>
