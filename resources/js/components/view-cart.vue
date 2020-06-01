@@ -1,7 +1,8 @@
 <template>
   <div>
     <div class="pb-5">
-      <div class="container">
+      <h1 class="ml-auto mr-auto col-md-6 text-center" v-if="subTotal == 0">Votre panier est vide</h1>
+      <div class="container" v-else>
         <div class="row">
           <div class="col-lg-12 p-5 bg-white rounded shadow-sm mb-5">
             <!-- Shopping cart table -->
@@ -50,10 +51,22 @@
                       <strong>{{ item.model.price / 100 }}€</strong>
                     </td>
                     <td class="border-0 align-middle">
-                      <strong>1</strong>
+                      <select
+                        @change="onChange($event, rowId = item.rowId)"
+                        name="qty"
+                        id="qty"
+                        class="custom-select"
+                      >
+                        <option
+                          v-for="count in counts"
+                          :key="count.id"
+                          :value="count"
+                          :selected="count == item.qty"
+                        >{{ count }}</option>
+                      </select>
                     </td>
                     <td class="border-0 align-middle">
-                      <form @submit.prevent="onDelete(item.rowId)">
+                      <form @submit="onDelete(item.rowId)">
                         <button @click="rowId = item.rowId" type="submit">Delete</button>
                       </form>
                     </td>
@@ -106,22 +119,22 @@
               <ul class="list-unstyled mb-4">
                 <li class="d-flex justify-content-between py-3 border-bottom">
                   <strong class="text-muted">Subtotal</strong>
-                  <strong>{{ getPrice }}€</strong>
+                  <strong>{{ subTotal }}€</strong>
                 </li>
                 <!-- <li class="d-flex justify-content-between py-3 border-bottom">
                   <strong class="text-muted">Shipping and handling</strong>
                   <strong>$10.00</strong>
-                </li> -->
+                </li>-->
                 <li class="d-flex justify-content-between py-3 border-bottom">
                   <strong class="text-muted">Tax</strong>
-                  <strong>$0.00</strong>
+                  <strong>{{ (0.2 * subTotal).toFixed(2) }}€</strong>
                 </li>
                 <li class="d-flex justify-content-between py-3 border-bottom">
                   <strong class="text-muted">Total</strong>
-                  <h5 class="font-weight-bold">$400.00</h5>
+                  <h5 class="font-weight-bold">{{ (subTotal + subTotal * 0.2).toFixed(2) }}€</h5>
                 </li>
               </ul>
-              <a href="#" class="btn btn-dark rounded-pill py-2 btn-block">Procceed to checkout</a>
+              <a href="/payment" class="btn btn-dark rounded-pill py-2 btn-block">Pay</a>
             </div>
           </div>
         </div>
@@ -132,14 +145,32 @@
 
 <script>
 export default {
-  props: ["dataCarts", "getPrice"],
+  props: ["dataCarts", "dataSub"],
   data() {
     return {
+      count: 0,
       rowId: [],
-      carts: this.dataCarts
+      carts: this.dataCarts,
+      subTotal: this.dataSub,
+      counts: 10,
+      form: {
+        qty: this.value,
+      }
     };
   },
+
   methods: {
+    onChange(event) {
+      this.form.qty = event.target.value;
+      
+      axios
+        .patch("http://ecommerce.test/cart/" + this.rowId, this.form)
+        .then(({ data }) => {
+           location.reload()
+        });
+       
+        
+    },
     onDelete(index) {
       axios
         .post("http://ecommerce.test/cart/" + this.rowId, this.rowId)
@@ -147,6 +178,8 @@ export default {
           Vue.delete(this.carts, index);
         });
     }
+  },
+  mounted() {
   }
 };
 </script>

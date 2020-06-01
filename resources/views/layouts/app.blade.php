@@ -7,7 +7,6 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
@@ -19,6 +18,9 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    
+    @yield('extra-script')
+
 </head>
 
 <body>
@@ -49,7 +51,7 @@
                         @endif
                         @else
                         <div>
-                            
+
                             <a href="{{ route('cart.index')}}">
                                 <img class="svg" src="/images/shopping-cart.svg" alt="cart">
                                 <span class="badge badge-pill badge-dark">{{ Cart::count() }}</span></a>
@@ -91,8 +93,12 @@
             @yield('edit-profil-user')
             @yield('product')
             @yield('cart')
+            @yield('checkout')
+            @yield('thankyou')
         </main>
     </div>
+    @yield('extra-js')
+   
 </body>
 
 </html>

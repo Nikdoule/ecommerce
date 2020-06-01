@@ -16,15 +16,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->middleware('verified')->group(function(){
     
-    Route::namespace('Products')->group(function() {
-        Route::resource('products', 'ProductsController');
-    });
-    Route::get('/', 'Products\ProductsController@index');
-    Route::get('/products/{slug}', 'Products\ProductsController@show')->name('products.show');
-
+    //admin
     Route::namespace('Admin')->prefix('admin')->name('admin.')->middleware('can:manage-users')->group(function() {
         Route::resource('users', 'UsersController');
     });
+
+    //user
     Route::namespace('Profil')->prefix('profil')->name('profil.')->group(function() {
         Route::resource('users', 'ProfilController');
         
@@ -33,17 +30,28 @@ Route::middleware('auth')->middleware('verified')->group(function(){
         Route::get('users', 'ProfilController@edit');
         
     });
+    //product
+    Route::namespace('Products')->group(function() {
+        Route::resource('products', 'ProductsController');
+    });
+    Route::get('/', 'Products\ProductsController@index');
 
+    Route::get('/products/{slug}', 'Products\ProductsController@show')->name('products.show');
+
+    //cart
     Route::get('/cart', 'CartController@index')->name('cart.index');
 
     Route::post('/cart/add', 'CartController@store')->name('cart.store');
 
+    Route::patch('/cart/{rowId}', 'CartController@update')->name('cart.update');
+
     Route::post('/cart/{rowId}', 'CartController@destroy')->name('cart.destroy');
 
-    Route::get('/cart/delete', function() {
-        Cart::destroy();
-    });
-    
+
+    //payement
+    Route::get('/payment', 'CheckoutController@index')->name('checkout.index');
+    Route::post('/payment', 'CheckoutController@store')->name('checkout.store');
+    Route::get('/thankyou', 'CheckoutController@thankYou')->name('checkout.thankYou');
 });
 
 Auth::routes(['verify' => true]);

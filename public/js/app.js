@@ -2102,24 +2102,51 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["dataCarts", "getPrice"],
+  props: ["dataCarts", "dataSub"],
   data: function data() {
     return {
+      count: 0,
       rowId: [],
-      carts: this.dataCarts
+      carts: this.dataCarts,
+      subTotal: this.dataSub,
+      counts: 10,
+      form: {
+        qty: this.value
+      }
     };
   },
   methods: {
+    onChange: function onChange(event) {
+      this.form.qty = event.target.value;
+      axios.patch("http://ecommerce.test/cart/" + this.rowId, this.form).then(function (_ref) {
+        var data = _ref.data;
+        location.reload();
+      });
+    },
     onDelete: function onDelete(index) {
       var _this = this;
 
-      axios.post("http://ecommerce.test/cart/" + this.rowId, this.rowId).then(function (_ref) {
-        var data = _ref.data;
+      axios.post("http://ecommerce.test/cart/" + this.rowId, this.rowId).then(function (_ref2) {
+        var data = _ref2.data;
         Vue["delete"](_this.carts, index);
       });
     }
-  }
+  },
+  mounted: function mounted() {}
 });
 
 /***/ }),
@@ -38408,165 +38435,243 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("div", { staticClass: "pb-5" }, [
-      _c("div", { staticClass: "container" }, [
-        _c("div", { staticClass: "row" }, [
-          _c(
-            "div",
-            { staticClass: "col-lg-12 p-5 bg-white rounded shadow-sm mb-5" },
-            [
-              _c("div", { staticClass: "table-responsive" }, [
-                _c("table", { staticClass: "table" }, [
-                  _vm._m(0),
-                  _vm._v(" "),
-                  _c(
-                    "tbody",
-                    _vm._l(_vm.carts, function(item) {
-                      return _c("tr", { key: item.id }, [
-                        _c(
-                          "th",
-                          { staticClass: "border-0", attrs: { scope: "row" } },
-                          [
-                            _c("div", { staticClass: "p-2" }, [
-                              _c("img", {
-                                staticClass: "img-fluid rounded shadow-sm",
-                                attrs: {
-                                  src: item.model.image,
-                                  alt: "",
-                                  width: "70"
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                {
-                                  staticClass:
-                                    "ml-3 d-inline-block align-middle"
-                                },
-                                [
-                                  _c("h5", { staticClass: "mb-0" }, [
-                                    _c(
-                                      "a",
-                                      {
-                                        staticClass:
-                                          "text-dark d-inline-block align-middle",
-                                        attrs: { href: "#" }
-                                      },
-                                      [_vm._v(_vm._s(item.model.title))]
-                                    )
-                                  ]),
+      _vm.subTotal == 0
+        ? _c("h1", { staticClass: "ml-auto mr-auto col-md-6 text-center" }, [
+            _vm._v("Votre panier est vide")
+          ])
+        : _c("div", { staticClass: "container" }, [
+            _c("div", { staticClass: "row" }, [
+              _c(
+                "div",
+                {
+                  staticClass: "col-lg-12 p-5 bg-white rounded shadow-sm mb-5"
+                },
+                [
+                  _c("div", { staticClass: "table-responsive" }, [
+                    _c("table", { staticClass: "table" }, [
+                      _vm._m(0),
+                      _vm._v(" "),
+                      _c(
+                        "tbody",
+                        _vm._l(_vm.carts, function(item) {
+                          return _c("tr", { key: item.id }, [
+                            _c(
+                              "th",
+                              {
+                                staticClass: "border-0",
+                                attrs: { scope: "row" }
+                              },
+                              [
+                                _c("div", { staticClass: "p-2" }, [
+                                  _c("img", {
+                                    staticClass: "img-fluid rounded shadow-sm",
+                                    attrs: {
+                                      src: item.model.image,
+                                      alt: "",
+                                      width: "70"
+                                    }
+                                  }),
                                   _vm._v(" "),
                                   _c(
-                                    "span",
+                                    "div",
                                     {
                                       staticClass:
-                                        "text-muted font-weight-normal font-italic d-block"
+                                        "ml-3 d-inline-block align-middle"
                                     },
-                                    [_vm._v("Category: Watches")]
+                                    [
+                                      _c("h5", { staticClass: "mb-0" }, [
+                                        _c(
+                                          "a",
+                                          {
+                                            staticClass:
+                                              "text-dark d-inline-block align-middle",
+                                            attrs: { href: "#" }
+                                          },
+                                          [_vm._v(_vm._s(item.model.title))]
+                                        )
+                                      ]),
+                                      _vm._v(" "),
+                                      _c(
+                                        "span",
+                                        {
+                                          staticClass:
+                                            "text-muted font-weight-normal font-italic d-block"
+                                        },
+                                        [_vm._v("Category: Watches")]
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "border-0 align-middle" }, [
+                              _c("strong", [
+                                _vm._v(_vm._s(item.model.price / 100) + "€")
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "border-0 align-middle" }, [
+                              _c(
+                                "select",
+                                {
+                                  staticClass: "custom-select",
+                                  attrs: { name: "qty", id: "qty" },
+                                  on: {
+                                    change: function($event) {
+                                      return _vm.onChange(
+                                        $event,
+                                        (_vm.rowId = item.rowId)
+                                      )
+                                    }
+                                  }
+                                },
+                                _vm._l(_vm.counts, function(count) {
+                                  return _c(
+                                    "option",
+                                    {
+                                      key: count.id,
+                                      domProps: {
+                                        value: count,
+                                        selected: count == item.qty
+                                      }
+                                    },
+                                    [_vm._v(_vm._s(count))]
+                                  )
+                                }),
+                                0
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "border-0 align-middle" }, [
+                              _c(
+                                "form",
+                                {
+                                  on: {
+                                    submit: function($event) {
+                                      return _vm.onDelete(item.rowId)
+                                    }
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "button",
+                                    {
+                                      attrs: { type: "submit" },
+                                      on: {
+                                        click: function($event) {
+                                          _vm.rowId = item.rowId
+                                        }
+                                      }
+                                    },
+                                    [_vm._v("Delete")]
                                   )
                                 ]
                               )
                             ])
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c("td", { staticClass: "border-0 align-middle" }, [
-                          _c("strong", [
-                            _vm._v(_vm._s(item.model.price / 100) + "€")
                           ])
-                        ]),
-                        _vm._v(" "),
-                        _vm._m(1, true),
-                        _vm._v(" "),
-                        _c("td", { staticClass: "border-0 align-middle" }, [
-                          _c(
-                            "form",
-                            {
-                              on: {
-                                submit: function($event) {
-                                  $event.preventDefault()
-                                  return _vm.onDelete(item.rowId)
-                                }
-                              }
-                            },
-                            [
-                              _c(
-                                "button",
-                                {
-                                  attrs: { type: "submit" },
-                                  on: {
-                                    click: function($event) {
-                                      _vm.rowId = item.rowId
-                                    }
-                                  }
-                                },
-                                [_vm._v("Delete")]
-                              )
-                            ]
-                          )
-                        ])
-                      ])
-                    }),
-                    0
-                  )
-                ])
-              ])
-            ]
-          )
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "row py-5 p-4 bg-white rounded shadow-sm" }, [
-          _vm._m(2),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-lg-6" }, [
+                        }),
+                        0
+                      )
+                    ])
+                  ])
+                ]
+              )
+            ]),
+            _vm._v(" "),
             _c(
               "div",
-              {
-                staticClass:
-                  "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
-              },
-              [_vm._v("order detail")]
-            ),
-            _vm._v(" "),
-            _c("div", { staticClass: "p-4" }, [
-              _c("p", { staticClass: "font-italic mb-4" }, [
-                _vm._v(
-                  "Shipping and additional costs are calculated based on values you have entered."
-                )
-              ]),
-              _vm._v(" "),
-              _c("ul", { staticClass: "list-unstyled mb-4" }, [
-                _c(
-                  "li",
-                  {
-                    staticClass:
-                      "d-flex justify-content-between py-3 border-bottom"
-                  },
-                  [
-                    _c("strong", { staticClass: "text-muted" }, [
-                      _vm._v("Subtotal")
+              { staticClass: "row py-5 p-4 bg-white rounded shadow-sm" },
+              [
+                _vm._m(1),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-lg-6" }, [
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
+                    },
+                    [_vm._v("order detail")]
+                  ),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "p-4" }, [
+                    _c("p", { staticClass: "font-italic mb-4" }, [
+                      _vm._v(
+                        "Shipping and additional costs are calculated based on values you have entered."
+                      )
                     ]),
                     _vm._v(" "),
-                    _c("strong", [_vm._v(_vm._s(_vm.getPrice) + "€")])
-                  ]
-                ),
-                _vm._v(" "),
-                _vm._m(3),
-                _vm._v(" "),
-                _vm._m(4)
-              ]),
-              _vm._v(" "),
-              _c(
-                "a",
-                {
-                  staticClass: "btn btn-dark rounded-pill py-2 btn-block",
-                  attrs: { href: "#" }
-                },
-                [_vm._v("Procceed to checkout")]
-              )
-            ])
+                    _c("ul", { staticClass: "list-unstyled mb-4" }, [
+                      _c(
+                        "li",
+                        {
+                          staticClass:
+                            "d-flex justify-content-between py-3 border-bottom"
+                        },
+                        [
+                          _c("strong", { staticClass: "text-muted" }, [
+                            _vm._v("Subtotal")
+                          ]),
+                          _vm._v(" "),
+                          _c("strong", [_vm._v(_vm._s(_vm.subTotal) + "€")])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "li",
+                        {
+                          staticClass:
+                            "d-flex justify-content-between py-3 border-bottom"
+                        },
+                        [
+                          _c("strong", { staticClass: "text-muted" }, [
+                            _vm._v("Tax")
+                          ]),
+                          _vm._v(" "),
+                          _c("strong", [
+                            _vm._v(
+                              _vm._s((0.2 * _vm.subTotal).toFixed(2)) + "€"
+                            )
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "li",
+                        {
+                          staticClass:
+                            "d-flex justify-content-between py-3 border-bottom"
+                        },
+                        [
+                          _c("strong", { staticClass: "text-muted" }, [
+                            _vm._v("Total")
+                          ]),
+                          _vm._v(" "),
+                          _c("h5", { staticClass: "font-weight-bold" }, [
+                            _vm._v(
+                              _vm._s(
+                                (_vm.subTotal + _vm.subTotal * 0.2).toFixed(2)
+                              ) + "€"
+                            )
+                          ])
+                        ]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "a",
+                      {
+                        staticClass: "btn btn-dark rounded-pill py-2 btn-block",
+                        attrs: { href: "/payment" }
+                      },
+                      [_vm._v("Pay")]
+                    )
+                  ])
+                ])
+              ]
+            )
           ])
-        ])
-      ])
     ])
   ])
 }
@@ -38613,14 +38718,6 @@ var staticRenderFns = [
           ]
         )
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", { staticClass: "border-0 align-middle" }, [
-      _c("strong", [_vm._v("1")])
     ])
   },
   function() {
@@ -38690,34 +38787,6 @@ var staticRenderFns = [
         })
       ])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "li",
-      { staticClass: "d-flex justify-content-between py-3 border-bottom" },
-      [
-        _c("strong", { staticClass: "text-muted" }, [_vm._v("Tax")]),
-        _vm._v(" "),
-        _c("strong", [_vm._v("$0.00")])
-      ]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "li",
-      { staticClass: "d-flex justify-content-between py-3 border-bottom" },
-      [
-        _c("strong", { staticClass: "text-muted" }, [_vm._v("Total")]),
-        _vm._v(" "),
-        _c("h5", { staticClass: "font-weight-bold" }, [_vm._v("$400.00")])
-      ]
-    )
   }
 ]
 render._withStripped = true
