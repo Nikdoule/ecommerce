@@ -23,6 +23,7 @@ Vue.component('products-component', require('./components/view-products.vue').de
 Vue.component('product-component', require('./components/view-product.vue').default);
 Vue.component('cart-component', require('./components/view-cart.vue').default);
 
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

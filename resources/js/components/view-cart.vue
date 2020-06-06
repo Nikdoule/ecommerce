@@ -7,6 +7,10 @@
           <div class="col-lg-12 p-5 bg-white rounded shadow-sm mb-5">
             <!-- Shopping cart table -->
             <div class="table-responsive">
+              <p
+                class="ml-auto mr-auto col-md-6 text-center danger"
+                v-if="form.qty > 5"
+              >La quantité ne peut dépasser 5</p>
               <table class="table">
                 <thead>
                   <tr>
@@ -25,11 +29,11 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in carts" :key="item.id">
+                  <tr v-for="cart in carts" :key="cart.id">
                     <th scope="row" class="border-0">
                       <div class="p-2">
                         <img
-                          :src="item.model.image"
+                          :src="cart.model.image"
                           alt
                           width="70"
                           class="img-fluid rounded shadow-sm"
@@ -39,20 +43,19 @@
                             <a
                               href="#"
                               class="text-dark d-inline-block align-middle"
-                            >{{ item.model.title }}</a>
+                            >{{ cart.model.title }}</a>
                           </h5>
-                          <span
-                            class="text-muted font-weight-normal font-italic d-block"
-                          >Category: Watches</span>
+                          <span class="text-muted font-weight-normal font-italic d-block">Category:</span>
                         </div>
                       </div>
                     </th>
                     <td class="border-0 align-middle">
-                      <strong>{{ item.model.price / 100 }}€</strong>
+                      <strong>{{ cart.subtotal = cart.model.price / 100 * cart.qty }}€</strong>
                     </td>
                     <td class="border-0 align-middle">
                       <select
-                        @change="onChange($event, rowId = item.rowId)"
+                        v-model="cart.qty"
+                        @change.prevent="onChange($event, rowId = cart.rowId)"
                         name="qty"
                         id="qty"
                         class="custom-select"
@@ -61,13 +64,13 @@
                           v-for="count in counts"
                           :key="count.id"
                           :value="count"
-                          :selected="count == item.qty"
+                          :selected="count == cart.qty"
                         >{{ count }}</option>
                       </select>
                     </td>
                     <td class="border-0 align-middle">
-                      <form @submit="onDelete(item.rowId)">
-                        <button @click="rowId = item.rowId" type="submit">Delete</button>
+                      <form @submit.prevent="onDelete(cart.rowId)">
+                        <button @click="rowId = cart.rowId" type="submit">Delete</button>
                       </form>
                     </td>
                   </tr>
@@ -119,7 +122,7 @@
               <ul class="list-unstyled mb-4">
                 <li class="d-flex justify-content-between py-3 border-bottom">
                   <strong class="text-muted">Subtotal</strong>
-                  <strong>{{ subTotal }}€</strong>
+                  <strong>{{ total }}€</strong>
                 </li>
                 <!-- <li class="d-flex justify-content-between py-3 border-bottom">
                   <strong class="text-muted">Shipping and handling</strong>
@@ -127,11 +130,11 @@
                 </li>-->
                 <li class="d-flex justify-content-between py-3 border-bottom">
                   <strong class="text-muted">Tax</strong>
-                  <strong>{{ (0.2 * subTotal).toFixed(2) }}€</strong>
+                  <strong>{{ (0.2 * total).toFixed(2) }}€</strong>
                 </li>
                 <li class="d-flex justify-content-between py-3 border-bottom">
                   <strong class="text-muted">Total</strong>
-                  <h5 class="font-weight-bold">{{ (subTotal + subTotal * 0.2).toFixed(2) }}€</h5>
+                  <h5 class="font-weight-bold">{{ (total+(0.2 * total)).toFixed(2) }}€</h5>
                 </li>
               </ul>
               <a href="/payment" class="btn btn-dark rounded-pill py-2 btn-block">Pay</a>
@@ -146,15 +149,15 @@
 <script>
 export default {
   props: ["dataCarts", "dataSub"],
+
   data() {
     return {
-      count: 0,
       rowId: [],
       carts: this.dataCarts,
       subTotal: this.dataSub,
-      counts: 10,
+      counts: 5,
       form: {
-        qty: this.value,
+        qty: ""
       }
     };
   },
@@ -162,25 +165,30 @@ export default {
   methods: {
     onChange(event) {
       this.form.qty = event.target.value;
-      
       axios
         .patch("http://ecommerce.test/cart/" + this.rowId, this.form)
         .then(({ data }) => {
-           location.reload()
+          //location.reload();
         });
-       
-        
     },
     onDelete(index) {
       axios
         .post("http://ecommerce.test/cart/" + this.rowId, this.rowId)
         .then(({ data }) => {
           Vue.delete(this.carts, index);
+          location.reload();
         });
-    }
+    },
+    onUpdate() {}
   },
-  mounted() {
-  }
+  computed: {
+    total() {
+      let total = Object.values(this.carts).reduce((t, {subtotal}) => t + subtotal, 0)
+      return parseFloat(total)
+    },
+    
+  },
+  mounted() {}
 };
 </script>
 

@@ -2115,26 +2115,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["dataCarts", "dataSub"],
   data: function data() {
     return {
-      count: 0,
       rowId: [],
       carts: this.dataCarts,
       subTotal: this.dataSub,
-      counts: 10,
+      counts: 5,
       form: {
-        qty: this.value
+        qty: ""
       }
     };
   },
   methods: {
     onChange: function onChange(event) {
       this.form.qty = event.target.value;
-      axios.patch("http://ecommerce.test/cart/" + this.rowId, this.form).then(function (_ref) {
+      axios.patch("http://ecommerce.test/cart/" + this.rowId, this.form).then(function (_ref) {//location.reload();
+
         var data = _ref.data;
-        location.reload();
       });
     },
     onDelete: function onDelete(index) {
@@ -2143,7 +2145,18 @@ __webpack_require__.r(__webpack_exports__);
       axios.post("http://ecommerce.test/cart/" + this.rowId, this.rowId).then(function (_ref2) {
         var data = _ref2.data;
         Vue["delete"](_this.carts, index);
+        location.reload();
       });
+    },
+    onUpdate: function onUpdate() {}
+  },
+  computed: {
+    total: function total() {
+      var total = Object.values(this.carts).reduce(function (t, _ref3) {
+        var subtotal = _ref3.subtotal;
+        return t + subtotal;
+      }, 0);
+      return parseFloat(total);
     }
   },
   mounted: function mounted() {}
@@ -38448,13 +38461,24 @@ var render = function() {
                 },
                 [
                   _c("div", { staticClass: "table-responsive" }, [
+                    _vm.form.qty > 5
+                      ? _c(
+                          "p",
+                          {
+                            staticClass:
+                              "ml-auto mr-auto col-md-6 text-center danger"
+                          },
+                          [_vm._v("La quantité ne peut dépasser 5")]
+                        )
+                      : _vm._e(),
+                    _vm._v(" "),
                     _c("table", { staticClass: "table" }, [
                       _vm._m(0),
                       _vm._v(" "),
                       _c(
                         "tbody",
-                        _vm._l(_vm.carts, function(item) {
-                          return _c("tr", { key: item.id }, [
+                        _vm._l(_vm.carts, function(cart) {
+                          return _c("tr", { key: cart.id }, [
                             _c(
                               "th",
                               {
@@ -38466,7 +38490,7 @@ var render = function() {
                                   _c("img", {
                                     staticClass: "img-fluid rounded shadow-sm",
                                     attrs: {
-                                      src: item.model.image,
+                                      src: cart.model.image,
                                       alt: "",
                                       width: "70"
                                     }
@@ -38487,7 +38511,7 @@ var render = function() {
                                               "text-dark d-inline-block align-middle",
                                             attrs: { href: "#" }
                                           },
-                                          [_vm._v(_vm._s(item.model.title))]
+                                          [_vm._v(_vm._s(cart.model.title))]
                                         )
                                       ]),
                                       _vm._v(" "),
@@ -38497,7 +38521,7 @@ var render = function() {
                                           staticClass:
                                             "text-muted font-weight-normal font-italic d-block"
                                         },
-                                        [_vm._v("Category: Watches")]
+                                        [_vm._v("Category:")]
                                       )
                                     ]
                                   )
@@ -38507,7 +38531,12 @@ var render = function() {
                             _vm._v(" "),
                             _c("td", { staticClass: "border-0 align-middle" }, [
                               _c("strong", [
-                                _vm._v(_vm._s(item.model.price / 100) + "€")
+                                _vm._v(
+                                  _vm._s(
+                                    (cart.subtotal =
+                                      (cart.model.price / 100) * cart.qty)
+                                  ) + "€"
+                                )
                               ])
                             ]),
                             _vm._v(" "),
@@ -38515,15 +38544,46 @@ var render = function() {
                               _c(
                                 "select",
                                 {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: cart.qty,
+                                      expression: "cart.qty"
+                                    }
+                                  ],
                                   staticClass: "custom-select",
                                   attrs: { name: "qty", id: "qty" },
                                   on: {
-                                    change: function($event) {
-                                      return _vm.onChange(
-                                        $event,
-                                        (_vm.rowId = item.rowId)
-                                      )
-                                    }
+                                    change: [
+                                      function($event) {
+                                        var $$selectedVal = Array.prototype.filter
+                                          .call($event.target.options, function(
+                                            o
+                                          ) {
+                                            return o.selected
+                                          })
+                                          .map(function(o) {
+                                            var val =
+                                              "_value" in o ? o._value : o.value
+                                            return val
+                                          })
+                                        _vm.$set(
+                                          cart,
+                                          "qty",
+                                          $event.target.multiple
+                                            ? $$selectedVal
+                                            : $$selectedVal[0]
+                                        )
+                                      },
+                                      function($event) {
+                                        $event.preventDefault()
+                                        return _vm.onChange(
+                                          $event,
+                                          (_vm.rowId = cart.rowId)
+                                        )
+                                      }
+                                    ]
                                   }
                                 },
                                 _vm._l(_vm.counts, function(count) {
@@ -38533,7 +38593,7 @@ var render = function() {
                                       key: count.id,
                                       domProps: {
                                         value: count,
-                                        selected: count == item.qty
+                                        selected: count == cart.qty
                                       }
                                     },
                                     [_vm._v(_vm._s(count))]
@@ -38549,7 +38609,8 @@ var render = function() {
                                 {
                                   on: {
                                     submit: function($event) {
-                                      return _vm.onDelete(item.rowId)
+                                      $event.preventDefault()
+                                      return _vm.onDelete(cart.rowId)
                                     }
                                   }
                                 },
@@ -38560,7 +38621,7 @@ var render = function() {
                                       attrs: { type: "submit" },
                                       on: {
                                         click: function($event) {
-                                          _vm.rowId = item.rowId
+                                          _vm.rowId = cart.rowId
                                         }
                                       }
                                     },
@@ -38614,7 +38675,7 @@ var render = function() {
                             _vm._v("Subtotal")
                           ]),
                           _vm._v(" "),
-                          _c("strong", [_vm._v(_vm._s(_vm.subTotal) + "€")])
+                          _c("strong", [_vm._v(_vm._s(_vm.total) + "€")])
                         ]
                       ),
                       _vm._v(" "),
@@ -38630,9 +38691,7 @@ var render = function() {
                           ]),
                           _vm._v(" "),
                           _c("strong", [
-                            _vm._v(
-                              _vm._s((0.2 * _vm.subTotal).toFixed(2)) + "€"
-                            )
+                            _vm._v(_vm._s((0.2 * _vm.total).toFixed(2)) + "€")
                           ])
                         ]
                       ),
@@ -38650,9 +38709,8 @@ var render = function() {
                           _vm._v(" "),
                           _c("h5", { staticClass: "font-weight-bold" }, [
                             _vm._v(
-                              _vm._s(
-                                (_vm.subTotal + _vm.subTotal * 0.2).toFixed(2)
-                              ) + "€"
+                              _vm._s((_vm.total + 0.2 * _vm.total).toFixed(2)) +
+                                "€"
                             )
                           ])
                         ]

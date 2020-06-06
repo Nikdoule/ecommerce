@@ -14,9 +14,9 @@ class CartController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-       
+        $data = $request->json()->all();
         $carts = Cart::content();
         $subTotal = Cart::subtotal();
         $subTotal = floatval($subTotal);
@@ -24,7 +24,7 @@ class CartController extends Controller
         
         return view('cart.index',[
             'carts' => $carts,
-            'subTotal' => $subTotal
+            'subTotal' => $subTotal,
         ]);
     }
 
@@ -91,7 +91,6 @@ class CartController extends Controller
     public function update(Request $request, $rowId)
     {
         $data = $request->json()->all();
-
         $validates = Validator::make($request->all(), [
             'qty' => 'numeric|required|between:1,5',
         ]);
@@ -104,7 +103,7 @@ class CartController extends Controller
         Cart::update($rowId, $data['qty']);
 
         Session::flash('success', 'La quantité du produit est passée à ' . $data['qty'] . '.');
-        return response()->json(['success' => 'Cart Quantity Has Been Updated']);
+        return $data;
     }
 
     /**
