@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="pb-5">
-      <h1 class="ml-auto mr-auto col-md-6 text-center" v-if="subTotal == 0">Votre panier est vide</h1>
+      <h1 class="ml-auto mr-auto col-md-6 text-center" v-if="total < 1">Votre panier est vide</h1>
       <div class="container" v-else>
         <div class="row">
           <div class="col-lg-12 p-5 bg-white rounded shadow-sm mb-5">
@@ -29,7 +29,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="cart in carts" :key="cart.id">
+                  <tr v-for="cart in getAllCart" :key="cart.id">
                     <th scope="row" class="border-0">
                       <div class="p-2">
                         <img
@@ -148,47 +148,51 @@
 
 <script>
 export default {
-  props: ["dataCarts", "dataSub"],
-
   data() {
     return {
+      selected: false,
       rowId: [],
-      carts: this.dataCarts,
-      subTotal: this.dataSub,
       counts: 5,
       form: {
         qty: ""
       }
     };
   },
-
+ mounted() {
+    this.$store.dispatch("allCartFromDatabase"),
+    this.$store.dispatch("subTotalFromDatabase")
+  },
   methods: {
     onChange(event) {
       this.form.qty = event.target.value;
       axios
         .patch("http://ecommerce.test/cart/" + this.rowId, this.form)
         .then(({ data }) => {
-          //location.reload();
         });
     },
     onDelete(index) {
       axios
         .post("http://ecommerce.test/cart/" + this.rowId, this.rowId)
         .then(({ data }) => {
-          Vue.delete(this.carts, index);
-          location.reload();
+          Vue.delete(this.getAllCart, index);
         });
-    },
-    onUpdate() {}
+    }
   },
   computed: {
     total() {
-      let total = Object.values(this.carts).reduce((t, {subtotal}) => t + subtotal, 0)
-      return parseFloat(total)
+      let total = Object.values(this.getAllCart).reduce(
+        (t, { subtotal }) => t + subtotal,
+        0
+      );
+      return parseFloat(total);
     },
-    
-  },
-  mounted() {}
+    getAllCart(){ //final output from here
+            return this.$store.getters.getCartFormGetters
+    },
+    getAllSubTotal(){ //final output from here
+            return this.$store.getters.getSubTotalFormGetters
+    }
+  }
 };
 </script>
 

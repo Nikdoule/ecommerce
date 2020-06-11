@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Laravel') }}</title>
@@ -50,12 +49,7 @@
                         </li>
                         @endif
                         @else
-                        <div>
-
-                            <a href="{{ route('cart.index')}}">
-                                <img class="svg" src="/images/shopping-cart.svg" alt="cart">
-                                <span class="badge badge-pill badge-dark">{{ Cart::count() }}</span></a>
-                        </div>
+                        <count-component></count-component>
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

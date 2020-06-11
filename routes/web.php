@@ -31,15 +31,16 @@ Route::middleware('auth')->middleware('verified')->group(function(){
         
     });
     //product
-    Route::namespace('Products')->group(function() {
-        Route::resource('products', 'ProductsController');
-    });
-    Route::get('/', 'Products\ProductsController@index');
+   
+    Route::get('/', 'Products\PageProductsController@index');
+    Route::get('/getProducts', 'Products\ProductsController@index');
 
-    Route::get('/products/{slug}', 'Products\ProductsController@show')->name('products.show');
-
+    
+    Route::get('/product/{slug}', 'Products\ProductsController@show');
     //cart
-    Route::get('/cart', 'CartController@index')->name('cart.index');
+    Route::get('/cart', 'PageCartsController@index');
+    
+    Route::get('/getCart', 'CartController@index');
 
     Route::post('/cart/add', 'CartController@store')->name('cart.store');
 
@@ -50,7 +51,9 @@ Route::middleware('auth')->middleware('verified')->group(function(){
 
     //payement
     Route::get('/payment', 'CheckoutController@index')->name('checkout.index');
+    
     Route::post('/payment', 'CheckoutController@store')->name('checkout.store');
+
     Route::get('/thankyou', 'CheckoutController@thankYou')->name('checkout.thankYou');
 });
 

@@ -107,6 +107,5 @@
 @else
 <div>Votre panier est vide</div>
 @endif --}}
-<cart-component :data-carts="{{ $carts }}" :data-sub="{{ $subTotal }}"></cart-component>
-
+<cart-component></cart-component>
 @endsection

@@ -14,20 +14,15 @@ class CartController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $data = $request->json()->all();
         $carts = Cart::content();
         $subTotal = Cart::subtotal();
         $subTotal = floatval($subTotal);
         $subTotal = number_format($subTotal, 2, '.', '') / 100;
         
-        return view('cart.index',[
-            'carts' => $carts,
-            'subTotal' => $subTotal,
-        ]);
+        return ['carts' => $carts,'subTotal' => $subTotal];
     }
-
     /**
      * Show the form for creating a new resource.
      *

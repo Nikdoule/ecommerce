@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Products;
-use App\Product;
+namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Gloudemans\Shoppingcart\Facades\Cart;
 
-class ProductsController extends Controller
+
+class ApiController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,18 +14,13 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        $products = Product::inRandomOrder()->take(6)->get();
+        $count = ['ok', 'ko', 'tko'];
+        $ok = [1,2];
+        return response()->json([
+            "count" => $count,
+            'ok' => $ok
 
-        return['products' => $products];
-    }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+         ],200);
     }
 
     /**
@@ -35,7 +30,7 @@ class ProductsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    { 
+    {
         //
     }
 
@@ -45,20 +40,7 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
-    {
-        $product = Product::where('slug', $slug)->firstOrFail();
-
-        return view('products.show')->with('product', $product);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function show($id)
     {
         //
     }

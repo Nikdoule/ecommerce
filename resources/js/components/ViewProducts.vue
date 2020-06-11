@@ -62,7 +62,7 @@
         </div>
       </div>
       <div class="row mb-2">
-        <div class="col-md-6" v-for="product in products" :key="product.id">
+        <div class="col-md-6" v-for="product in getAllProduct" :key="product.id">
           <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
             <div class="col p-4 d-flex flex-column position-static">
                 <img :src="product.image" alt="">
@@ -72,7 +72,7 @@
               <p
                 class="card-text mb-auto"
               >{{ product.price / 100 }} €</p>
-              <a :href="'products/'+product.slug" class="stretched-link btn btn-info">Continue reading</a>
+              <a :href="'product/'+product.slug" class="stretched-link btn btn-info">Continue reading</a>
             </div>
           </div>
         </div>
@@ -83,7 +83,19 @@
 
 <script>
 export default {
-  props: ["products"]
+  data() {
+    return {
+    }
+  },
+  mounted() {
+      this.$store.dispatch("allProductsFromDatabase")
+    },
+    computed: {
+      getAllProduct() {
+        return this.$store.getters.getProductsFromGetters
+     
+        }
+    }
 };
 </script>
 

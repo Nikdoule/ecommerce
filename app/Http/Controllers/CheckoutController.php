@@ -23,7 +23,6 @@ class CheckoutController extends Controller
     {
 
         $carts = Cart::content();
-
         Stripe::setApiKey('sk_test_DxQmYlm9dRR4WFgZSpaTIDHY00CBGenURB');
 
         $intent = PaymentIntent::create([
