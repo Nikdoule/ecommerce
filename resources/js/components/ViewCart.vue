@@ -100,7 +100,7 @@
                 <div class="input-group-append border-0">
                   <button id="button-addon3" type="button" class="btn btn-dark px-4 rounded-pill">
                     <i class="fa fa-gift mr-2"></i>
-                    {{show}}
+                    Valider
                   </button>
                 </div>
               </div>
@@ -155,7 +155,6 @@ export default {
   data() {
     return {
       show: false,
-      total2:'',
       selected: false,
       rowId: [],
       counts: 5,
