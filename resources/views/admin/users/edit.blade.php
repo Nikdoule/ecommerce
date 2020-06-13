@@ -2,7 +2,7 @@
 
 @section('edit-user')
 <div class="container">
-    {{-- <div class="row justify-content-center">
+    <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card mt-5">
                 <div class="card-header">Edit {{ $user->name }}</div>
@@ -57,7 +57,7 @@
                 </div>
             </div>
         </div>
-    </div> --}}
-<user-component :user="{{ $user }}" :roles="{{ $roles }}"></user-component>
+    </div>
+{{-- <user-component :user="{{ $user }}" :roles="{{ $roles }}"></user-component> --}}
 </div>
 @endsection

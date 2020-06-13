@@ -1920,8 +1920,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['carts'],
   data: function data() {
     return {
+      hrefcart: '/cart',
+      hrefHome: '/',
       cTotal: ''
     };
   },
@@ -1936,7 +1939,7 @@ __webpack_require__.r(__webpack_exports__);
       this.cTotal = Object.values(this.getAllCart).reduce(function (t, _ref) {
         var qty = _ref.qty;
         return t + Number(qty);
-      }, null);
+      }, 0);
       return this.cTotal;
     }
   }
@@ -2163,9 +2166,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      show: false,
+      total2: '',
       selected: false,
       rowId: [],
       counts: 5,
@@ -2179,17 +2188,21 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     onChange: function onChange(event) {
+      var _this = this;
+
       this.form.qty = event.target.value;
       axios.patch("http://ecommerce.test/cart/" + this.rowId, this.form).then(function (_ref) {
         var data = _ref.data;
+        _this.show = true;
       });
     },
     onDelete: function onDelete(index) {
-      var _this = this;
+      var _this2 = this;
 
       axios.post("http://ecommerce.test/cart/" + this.rowId, this.rowId).then(function (_ref2) {
         var data = _ref2.data;
-        Vue["delete"](_this.getAllCart, index);
+        Vue["delete"](_this2.getAllCart, index);
+        location.reload();
       });
     }
   },
@@ -2202,11 +2215,9 @@ __webpack_require__.r(__webpack_exports__);
       return parseFloat(total);
     },
     getAllCart: function getAllCart() {
-      //final output from here
       return this.$store.getters.getCartFormGetters;
     },
     getAllSubTotal: function getAllSubTotal() {
-      //final output from here
       return this.$store.getters.getSubTotalFormGetters;
     }
   }
@@ -2358,15 +2369,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return {};
+    return {
+      slug: '',
+      tableau: []
+    };
   },
   mounted: function mounted() {
     this.$store.dispatch("allProductsFromDatabase");
   },
+  methods: {},
   computed: {
-    getAllProduct: function getAllProduct() {
+    getAllProducts: function getAllProducts() {
       return this.$store.getters.getProductsFromGetters;
     }
   }
@@ -38665,16 +38683,26 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("div", [
-      _c("a", { attrs: { href: "/cart" } }, [
-        _c("img", {
-          staticClass: "svg",
-          attrs: { src: "/images/shopping-cart.svg", alt: "cart" }
-        }),
-        _vm._v(" "),
-        _c("span", { staticClass: "badge badge-pill badge-dark" }, [
-          _vm._v(_vm._s(_vm.countTotal))
-        ])
-      ])
+      _vm.countTotal > 0
+        ? _c("a", { staticClass: "height-cart", attrs: { href: _vm.hrefcart } })
+        : _vm._e(),
+      _vm._v(" "),
+      _c("img", {
+        staticClass: "svg",
+        attrs: { src: "/images/shopping-cart.svg", alt: "cart" }
+      }),
+      _vm._v(" "),
+      _vm.countTotal > 0
+        ? _c("span", { staticClass: "badge badge-pill badge-dark" }, [
+            _vm._v(_vm._s(_vm.countTotal))
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.countTotal < 1
+        ? _c("span", { staticClass: "badge badge-pill badge-dark" }, [
+            _vm._v(_vm._s(_vm.carts))
+          ])
+        : _vm._e()
     ])
   ])
 }
@@ -38819,7 +38847,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("div", { staticClass: "pb-5" }, [
-      _vm.total < 1
+      Object.keys(_vm.getAllCart).length === 0
         ? _c("h1", { staticClass: "ml-auto mr-auto col-md-6 text-center" }, [
             _vm._v("Votre panier est vide")
           ])
@@ -39015,7 +39043,74 @@ var render = function() {
               "div",
               { staticClass: "row py-5 p-4 bg-white rounded shadow-sm" },
               [
-                _vm._m(1),
+                _c("div", { staticClass: "col-lg-6" }, [
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
+                    },
+                    [_vm._v("Coupon code")]
+                  ),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "p-4" }, [
+                    _c("p", { staticClass: "font-italic mb-4" }, [
+                      _vm._v(
+                        "If you have a coupon code, please enter it in the box below"
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "input-group mb-4 border rounded-pill p-2"
+                      },
+                      [
+                        _c("input", {
+                          staticClass: "form-control border-0",
+                          attrs: {
+                            type: "text",
+                            placeholder: "Apply coupon",
+                            "aria-describedby": "button-addon3"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "input-group-append border-0" },
+                          [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-dark px-4 rounded-pill",
+                                attrs: { id: "button-addon3", type: "button" }
+                              },
+                              [
+                                _c("i", { staticClass: "fa fa-gift mr-2" }),
+                                _vm._v(
+                                  "\n                  " +
+                                    _vm._s(_vm.show) +
+                                    "\n                "
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      ]
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
+                    },
+                    [_vm._v("Instructions for seller")]
+                  ),
+                  _vm._v(" "),
+                  _vm._m(1)
+                ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "col-lg-6" }, [
                   _c(
@@ -39153,68 +39248,17 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-lg-6" }, [
-      _c(
-        "div",
-        {
-          staticClass:
-            "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
-        },
-        [_vm._v("Coupon code")]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "p-4" }, [
-        _c("p", { staticClass: "font-italic mb-4" }, [
-          _vm._v("If you have a coupon code, please enter it in the box below")
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "input-group mb-4 border rounded-pill p-2" }, [
-          _c("input", {
-            staticClass: "form-control border-0",
-            attrs: {
-              type: "text",
-              placeholder: "Apply coupon",
-              "aria-describedby": "button-addon3"
-            }
-          }),
-          _vm._v(" "),
-          _c("div", { staticClass: "input-group-append border-0" }, [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-dark px-4 rounded-pill",
-                attrs: { id: "button-addon3", type: "button" }
-              },
-              [
-                _c("i", { staticClass: "fa fa-gift mr-2" }),
-                _vm._v("Apply coupon\n                ")
-              ]
-            )
-          ])
-        ])
+    return _c("div", { staticClass: "p-4" }, [
+      _c("p", { staticClass: "font-italic mb-4" }, [
+        _vm._v(
+          "If you have some information for the seller you can leave them in the box below"
+        )
       ]),
       _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass:
-            "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
-        },
-        [_vm._v("Instructions for seller")]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "p-4" }, [
-        _c("p", { staticClass: "font-italic mb-4" }, [
-          _vm._v(
-            "If you have some information for the seller you can leave them in the box below"
-          )
-        ]),
-        _vm._v(" "),
-        _c("textarea", {
-          staticClass: "form-control",
-          attrs: { name: "", cols: "30", rows: "2" }
-        })
-      ])
+      _c("textarea", {
+        staticClass: "form-control",
+        attrs: { name: "", cols: "30", rows: "2" }
+      })
     ])
   }
 ]
@@ -39404,7 +39448,7 @@ var render = function() {
       _c(
         "div",
         { staticClass: "row mb-2" },
-        _vm._l(_vm.getAllProduct, function(product) {
+        _vm._l(_vm.getAllProducts, function(product) {
           return _c("div", { key: product.id, staticClass: "col-md-6" }, [
             _c(
               "div",
@@ -53313,11 +53357,15 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+var _actions;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
     carts: [],
     products: [],
-    product: '',
+    product: [],
     subTotal: '',
     slug: ''
   },
@@ -53338,41 +53386,49 @@ __webpack_require__.r(__webpack_exports__);
       return state.product;
     }
   },
-  actions: {
+  actions: (_actions = {
     //carts
     allCartFromDatabase: function allCartFromDatabase(context) {
-      axios.get("getCart").then(function (response) {
+      axios.get("getCarts").then(function (response) {
         context.commit("carts", response.data.carts);
       })["catch"](function () {
         console.log("Error get carts");
       });
-    },
-    subTotalFromDatabase: function subTotalFromDatabase(context) {
-      axios.get("getCart").then(function (response) {
-        context.commit('subTotal', response.data.subTotal);
-      })["catch"](function () {
-        console.log("Error get subTotal");
-      });
-    },
-    //Products
-    allProductsFromDatabase: function allProductsFromDatabase(context) {
-      var _this = this;
-
-      axios.get('getProducts').then(function (response) {
-        context.commit('products', response.data.products);
-        console.log(_this.state.products);
-      })["catch"](function () {
-        console.log("Error get products");
-      });
-    },
-    allProductFromDatabase: function allProductFromDatabase(context) {
-      axios.get('getProduct/assumenda-in-ducimus-quibusdam').then(function (response) {
-        context.commit('product', response.data.product);
-      })["catch"](function () {
-        console.log("Error get product");
-      });
     }
-  },
+  }, _defineProperty(_actions, "allCartFromDatabase", function allCartFromDatabase(context) {
+    axios.get("getCarts").then(function (response) {
+      context.commit("carts", response.data.carts);
+    })["catch"](function () {
+      console.log("Error get carts");
+    });
+  }), _defineProperty(_actions, "subTotalFromDatabase", function subTotalFromDatabase(context) {
+    axios.get("getCarts").then(function (response) {
+      context.commit('subTotal', response.data.subTotal);
+    })["catch"](function () {
+      console.log("Error get subTotal");
+    });
+  }), _defineProperty(_actions, "allProductsFromDatabase", function allProductsFromDatabase(context) {
+    var _this = this;
+
+    axios.get('getProducts').then(function (response) {
+      context.commit('products', response.data.products);
+      console.log(_this.state.products);
+    })["catch"](function () {
+      console.log("Error get products");
+    });
+  }), _defineProperty(_actions, "allProductFromDatabase", function allProductFromDatabase(context) {
+    var _this2 = this;
+
+    axios.get('getProduct/' + window.location.href.substr(22)).then(function (response) {
+      context.commit('product', response.data.product);
+      console.log(_this2.state.product);
+    })["catch"](function () {
+      console.log('getProduct/' + window.location.href.substr(30));
+    });
+  }), _defineProperty(_actions, "clickIncrementSlug", function clickIncrementSlug(_ref, message) {
+    var commit = _ref.commit;
+    commit('increment', message);
+  }), _actions),
   mutations: {
     //carts
     carts: function carts(state, data) {
@@ -53387,6 +53443,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     product: function product(state, data) {
       return state.product = data;
+    },
+    increment: function increment(state, message) {
+      return state.slug = message;
     }
   }
 });

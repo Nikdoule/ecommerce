@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Products;
 use App\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Gloudemans\Shoppingcart\Facades\Cart;
 
 class ProductsController extends Controller
 {
@@ -15,7 +16,7 @@ class ProductsController extends Controller
     public function index()
     {
         $products = Product::inRandomOrder()->take(6)->get();
-
+        
         return['products' => $products];
     }
     /**
@@ -48,8 +49,9 @@ class ProductsController extends Controller
     public function show($slug)
     {
         $product = Product::where('slug', $slug)->firstOrFail();
-
-        return view('products.show')->with('product', $product);
+        return view('products.show',[
+            'product' => $product
+        ]);
     }
 
     /**

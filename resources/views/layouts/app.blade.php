@@ -49,7 +49,7 @@
                         </li>
                         @endif
                         @else
-                        <count-component></count-component>
+                        <count-component :carts="{{Cart::Count()}}"></count-component>
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -89,6 +89,7 @@
             @yield('cart')
             @yield('checkout')
             @yield('thankyou')
+            @yield('test')
         </main>
     </div>
     @yield('extra-js')

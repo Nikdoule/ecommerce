@@ -2,9 +2,9 @@ export default {
     state: {
         carts:[],
         products:[],
-        product:'',
+        product:[],
         subTotal: '',
-        slug:''
+        slug: ''
     },
 
     getters: {
@@ -32,7 +32,7 @@ export default {
     actions: {
         //carts
         allCartFromDatabase(context) {
-            axios.get("getCart")
+            axios.get("getCarts")
                 .then((response) => {
                     
                     context.commit("carts", response.data.carts)
@@ -44,7 +44,8 @@ export default {
                 })
         },
         subTotalFromDatabase(context) {
-            axios.get("getCart")
+            axios.get("getCarts")
+            
             .then((response) => {
                 context.commit('subTotal', response.data.subTotal)
             })
@@ -56,9 +57,9 @@ export default {
         allProductsFromDatabase(context) {
             axios.get('getProducts')
                 .then((response) => {
-                    
                     context.commit('products', response.data.products)
                     console.log(this.state.products)
+                    
                 })
                 .catch(() => {
 
@@ -66,18 +67,24 @@ export default {
 
                 })
         },
+        //Product
         allProductFromDatabase(context) {
-            axios.get('getProduct/assumenda-in-ducimus-quibusdam')
+            axios.get('getProduct/'+window.location.href.substr(22))
                 .then((response) => {
-                    
                     context.commit('product', response.data.product)
+                    console.log(this.state.product)
                 })
                 .catch(() => {
 
-                    console.log("Error get product")
+                    console.log('getProduct/'+window.location.href.substr(30))
 
                 })
-        }
+        },
+        clickIncrementSlug({ commit },message) {
+            commit('increment', message)
+          },
+        
+        
     },
 
     mutations: {
@@ -95,6 +102,9 @@ export default {
         product(state, data) {
             return state.product = data
         },
+        increment(state, message) {
+            return state.slug = message;
+        }
         
     }
 }

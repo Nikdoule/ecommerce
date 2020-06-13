@@ -6,7 +6,8 @@
             {{ session('success') }}
         </div>
     @endif
+    
     <products-component></products-component>
-
+    
 </div>
 @endsection

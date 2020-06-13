@@ -77,10 +77,17 @@ class ProfilController extends Controller
     {
         $user = Auth::user();
         $user->name = $request->name;
+        $user->last_name = $request->last_name;
+        $user->civility = $request->civility;
         $user->email = $request->email;
+        $user->adress = $request->adress;
+        $user->zip_code = $request->zip_code;
+        $user->city = $request->city;
+        $user->phone = $request->phone;
+
         $user->save();
 
-        return redirect()->route('edit.users');
+        return redirect()->route('edit.users')->with('success', 'Votre profil à bien été modifié');
     }
 
     /**

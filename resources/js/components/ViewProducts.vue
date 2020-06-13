@@ -62,17 +62,20 @@
         </div>
       </div>
       <div class="row mb-2">
-        <div class="col-md-6" v-for="product in getAllProduct" :key="product.id">
-          <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col-md-6" v-for="product in getAllProducts" :key="product.id">
+          <div
+            class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative"
+          >
             <div class="col p-4 d-flex flex-column position-static">
-                <img :src="product.image" alt="">
+              <img :src="product.image" alt />
               <strong class="d-inline-block mb-2 text-primary">World</strong>
               <h5 class="mb-0">{{ product.title }}</h5>
               <div class="mb-1 text-muted">{{ product.subtitle }}</div>
-              <p
-                class="card-text mb-auto"
-              >{{ product.price / 100 }} €</p>
-              <a :href="'product/'+product.slug" class="stretched-link btn btn-info">Continue reading</a>
+              <p class="card-text mb-auto">{{ product.price / 100 }} €</p>
+              <a
+                :href="'product/'+product.slug"
+                class="stretched-link btn btn-info"
+              >Continue reading</a>
             </div>
           </div>
         </div>
@@ -85,17 +88,24 @@
 export default {
   data() {
     return {
-    }
+      slug: '',
+      tableau:[],
+    };
   },
   mounted() {
-      this.$store.dispatch("allProductsFromDatabase")
+    this.$store.dispatch("allProductsFromDatabase");
+  },
+  
+  methods: {
+  },
+  
+  computed: {
+    getAllProducts() {
+      return this.$store.getters.getProductsFromGetters;
     },
-    computed: {
-      getAllProduct() {
-        return this.$store.getters.getProductsFromGetters
-     
-        }
-    }
+    
+   
+  }
 };
 </script>
 

@@ -16,6 +16,7 @@ class CartController extends Controller
      */
     public function index()
     {
+        
         $carts = Cart::content();
         $subTotal = Cart::subtotal();
         $subTotal = floatval($subTotal);
@@ -96,8 +97,7 @@ class CartController extends Controller
         }
 
         Cart::update($rowId, $data['qty']);
-
-        Session::flash('success', 'La quantité du produit est passée à ' . $data['qty'] . '.');
+        
         return $data;
     }
 

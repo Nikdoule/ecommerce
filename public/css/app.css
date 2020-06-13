@@ -11,6 +11,12 @@
   background-color: white;
 }
 
+.height-cart {
+  position: absolute;
+  height: 30px;
+  width: 30px;
+}
+
 /*!
  * Bootstrap v4.4.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors

@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="pb-5">
-      <h1 class="ml-auto mr-auto col-md-6 text-center" v-if="total < 1">Votre panier est vide</h1>
+      <h1
+        class="ml-auto mr-auto col-md-6 text-center"
+        v-if="Object.keys(getAllCart).length === 0"
+      >Votre panier est vide</h1>
       <div class="container" v-else>
         <div class="row">
           <div class="col-lg-12 p-5 bg-white rounded shadow-sm mb-5">
@@ -96,7 +99,8 @@
                 />
                 <div class="input-group-append border-0">
                   <button id="button-addon3" type="button" class="btn btn-dark px-4 rounded-pill">
-                    <i class="fa fa-gift mr-2"></i>Apply coupon
+                    <i class="fa fa-gift mr-2"></i>
+                    {{show}}
                   </button>
                 </div>
               </div>
@@ -150,6 +154,8 @@
 export default {
   data() {
     return {
+      show: false,
+      total2:'',
       selected: false,
       rowId: [],
       counts: 5,
@@ -158,9 +164,9 @@ export default {
       }
     };
   },
- mounted() {
+  mounted() {
     this.$store.dispatch("allCartFromDatabase"),
-    this.$store.dispatch("subTotalFromDatabase")
+    this.$store.dispatch("subTotalFromDatabase");
   },
   methods: {
     onChange(event) {
@@ -168,6 +174,8 @@ export default {
       axios
         .patch("http://ecommerce.test/cart/" + this.rowId, this.form)
         .then(({ data }) => {
+          this.show = true;
+          
         });
     },
     onDelete(index) {
@@ -175,22 +183,23 @@ export default {
         .post("http://ecommerce.test/cart/" + this.rowId, this.rowId)
         .then(({ data }) => {
           Vue.delete(this.getAllCart, index);
+          location.reload();
         });
     }
   },
   computed: {
-    total() {
+    total: function() {
       let total = Object.values(this.getAllCart).reduce(
         (t, { subtotal }) => t + subtotal,
         0
       );
       return parseFloat(total);
     },
-    getAllCart(){ //final output from here
-            return this.$store.getters.getCartFormGetters
+    getAllCart: function() {
+      return this.$store.getters.getCartFormGetters;
     },
-    getAllSubTotal(){ //final output from here
-            return this.$store.getters.getSubTotalFormGetters
+    getAllSubTotal: function() {
+      return this.$store.getters.getSubTotalFormGetters;
     }
   }
 };

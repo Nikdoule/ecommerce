@@ -30,17 +30,18 @@ Route::middleware('auth')->middleware('verified')->group(function(){
         Route::get('users', 'ProfilController@edit');
         
     });
+
     //product
    
-    Route::get('/', 'Products\PageProductsController@index');
-    Route::get('/getProducts', 'Products\ProductsController@index');
+    Route::get('/', 'Products\PageProductsController@index')->name('products.index');
 
+    Route::get('/getProducts', 'Products\ProductsController@index');
     
     Route::get('/product/{slug}', 'Products\ProductsController@show');
     //cart
-    Route::get('/cart', 'PageCartsController@index');
+    Route::get('/cart', 'PageCartsController@index')->name('carts.index');
     
-    Route::get('/getCart', 'CartController@index');
+    Route::get('/getCarts', 'CartController@index');
 
     Route::post('/cart/add', 'CartController@store')->name('cart.store');
 
@@ -55,6 +56,9 @@ Route::middleware('auth')->middleware('verified')->group(function(){
     Route::post('/payment', 'CheckoutController@store')->name('checkout.store');
 
     Route::get('/thankyou', 'CheckoutController@thankYou')->name('checkout.thankYou');
+
+    //test
+    Route::get('/test/ok', 'TestController@index');
 });
 
 Auth::routes(['verify' => true]);
