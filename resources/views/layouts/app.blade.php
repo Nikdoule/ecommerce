@@ -49,7 +49,9 @@
                         </li>
                         @endif
                         @else
-                        <count-component :carts="{{Cart::Count()}}"></count-component>
+                        @if (Auth::user()->image)
+                        <img src="{{asset('storage/' . Auth::user()->image)}}" alt="client-avatar" class="user-img">
+                        @endif
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -71,6 +73,7 @@
                                 <a class="dropdown-item" href="{{ route('edit.users') }}">Profil</a>
                             </div>
                         </li>
+                        <count-component :carts="{{Cart::Count()}}"></count-component>
                         @endguest
                     </ul>
                 </div>

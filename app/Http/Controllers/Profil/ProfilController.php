@@ -83,7 +83,9 @@ class ProfilController extends Controller
         $user->adress = $request->adress;
         $user->zip_code = $request->zip_code;
         $user->city = $request->city;
+        $user->image = $request->image;
         $user->phone = $request->phone;
+        $this->storeImage($user);
 
         $user->save();
 
@@ -99,5 +101,14 @@ class ProfilController extends Controller
     public function destroy(User $user)
     {
         //
+    }
+    private function storeImage(User $user)
+    {
+        if(request('image')){
+            $user->update([
+                'image' => request('image')->store('avatars', 'public')
+            ]);
+        }
+
     }
 }

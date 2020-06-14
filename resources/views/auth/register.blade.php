@@ -8,7 +8,7 @@
                 <div class="card-header">{{ __('Register') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+                    <form method="POST" enctype="multipart/form-data" action="{{ route('register') }}">
                         @csrf
                         <h1>Your identifiers</h1>
                         <div class="form-group row">
@@ -114,8 +114,9 @@
                         <div class="form-group row">
                             <label for="adress" class="col-md-4 col-form-label text-md-right">{{ __('Adress') }}</label>
                             <div class="col-md-6">
-                                <input id="adress" type="text" class="form-control @error('adress') is-invalid @enderror"
-                                    name="adress" value="{{ old('adress') }}" required autocomplete="adress" autofocus>
+                                <input id="adress" type="text"
+                                    class="form-control @error('adress') is-invalid @enderror" name="adress"
+                                    value="{{ old('adress') }}" required autocomplete="adress" autofocus>
                                 @error('adress')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -124,10 +125,12 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="zip_code" class="col-md-4 col-form-label text-md-right">{{ __('Zip code') }}</label>
+                            <label for="zip_code"
+                                class="col-md-4 col-form-label text-md-right">{{ __('Zip code') }}</label>
                             <div class="col-md-6">
-                                <input id="zip_code" type="text" class="form-control @error('zip_code') is-invalid @enderror"
-                                    name="zip_code" value="{{ old('zip_code') }}" required autocomplete="zip_code" autofocus>
+                                <input id="zip_code" type="text"
+                                    class="form-control @error('zip_code') is-invalid @enderror" name="zip_code"
+                                    value="{{ old('zip_code') }}" required autocomplete="zip_code" autofocus>
 
                                 @error('zip_code')
                                 <span class="invalid-feedback" role="alert">
@@ -154,8 +157,19 @@
                             <div class="col-md-6">
                                 <input id="phone" type="text" class="form-control @error('phone') is-invalid @enderror"
                                     name="phone" value="{{ old('phone') }}" required autocomplete="phone" autofocus>
-
                                 @error('phone')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="image" class="col-md-4 col-form-label text-md-right">{{ __('Image') }}</label>
+                            <div class="col-md-6">
+                                <input name="image" type="file" class="form-control @error('image') is-invalid @enderror" id="image">
+                                <label class="custom-file-label" for="image">Choose file...</label>
+                                @error('image')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

@@ -54,6 +54,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'image' => 'sometimes|image|max:5000',
         ]);
     }
 
@@ -75,11 +76,22 @@ class RegisterController extends Controller
             'city' => $data['city'],
             'zip_code' => $data['zip_code'],
             'password' => Hash::make($data['password']),
+            
         ]);
-
+        $this->storeImage($user);
         $role = Role::select('id')->where('name', 'guest')->first();
         $user->roles()->attach($role);
 
         return $user;
+    }
+
+    private function storeImage(User $user)
+    {
+        if(request('image')){
+            $user->update([
+                'image' => request('image')->store('avatars', 'public')
+            ]);
+        }
+
     }
 }

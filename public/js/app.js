@@ -2174,7 +2174,6 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       show: false,
-      total2: '',
       selected: false,
       rowId: [],
       counts: 5,
@@ -39043,74 +39042,7 @@ var render = function() {
               "div",
               { staticClass: "row py-5 p-4 bg-white rounded shadow-sm" },
               [
-                _c("div", { staticClass: "col-lg-6" }, [
-                  _c(
-                    "div",
-                    {
-                      staticClass:
-                        "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
-                    },
-                    [_vm._v("Coupon code")]
-                  ),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "p-4" }, [
-                    _c("p", { staticClass: "font-italic mb-4" }, [
-                      _vm._v(
-                        "If you have a coupon code, please enter it in the box below"
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      {
-                        staticClass: "input-group mb-4 border rounded-pill p-2"
-                      },
-                      [
-                        _c("input", {
-                          staticClass: "form-control border-0",
-                          attrs: {
-                            type: "text",
-                            placeholder: "Apply coupon",
-                            "aria-describedby": "button-addon3"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "input-group-append border-0" },
-                          [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-dark px-4 rounded-pill",
-                                attrs: { id: "button-addon3", type: "button" }
-                              },
-                              [
-                                _c("i", { staticClass: "fa fa-gift mr-2" }),
-                                _vm._v(
-                                  "\n                  " +
-                                    _vm._s(_vm.show) +
-                                    "\n                "
-                                )
-                              ]
-                            )
-                          ]
-                        )
-                      ]
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    {
-                      staticClass:
-                        "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
-                    },
-                    [_vm._v("Instructions for seller")]
-                  ),
-                  _vm._v(" "),
-                  _vm._m(1)
-                ]),
+                _vm._m(1),
                 _vm._v(" "),
                 _c("div", { staticClass: "col-lg-6" }, [
                   _c(
@@ -39248,17 +39180,68 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "p-4" }, [
-      _c("p", { staticClass: "font-italic mb-4" }, [
-        _vm._v(
-          "If you have some information for the seller you can leave them in the box below"
-        )
+    return _c("div", { staticClass: "col-lg-6" }, [
+      _c(
+        "div",
+        {
+          staticClass:
+            "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
+        },
+        [_vm._v("Coupon code")]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "p-4" }, [
+        _c("p", { staticClass: "font-italic mb-4" }, [
+          _vm._v("If you have a coupon code, please enter it in the box below")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "input-group mb-4 border rounded-pill p-2" }, [
+          _c("input", {
+            staticClass: "form-control border-0",
+            attrs: {
+              type: "text",
+              placeholder: "Apply coupon",
+              "aria-describedby": "button-addon3"
+            }
+          }),
+          _vm._v(" "),
+          _c("div", { staticClass: "input-group-append border-0" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-dark px-4 rounded-pill",
+                attrs: { id: "button-addon3", type: "button" }
+              },
+              [
+                _c("i", { staticClass: "fa fa-gift mr-2" }),
+                _vm._v("\n                  Valider\n                ")
+              ]
+            )
+          ])
+        ])
       ]),
       _vm._v(" "),
-      _c("textarea", {
-        staticClass: "form-control",
-        attrs: { name: "", cols: "30", rows: "2" }
-      })
+      _c(
+        "div",
+        {
+          staticClass:
+            "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
+        },
+        [_vm._v("Instructions for seller")]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "p-4" }, [
+        _c("p", { staticClass: "font-italic mb-4" }, [
+          _vm._v(
+            "If you have some information for the seller you can leave them in the box below"
+          )
+        ]),
+        _vm._v(" "),
+        _c("textarea", {
+          staticClass: "form-control",
+          attrs: { name: "", cols: "30", rows: "2" }
+        })
+      ])
     ])
   }
 ]
@@ -53357,10 +53340,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var _actions;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
     carts: [],
@@ -53386,7 +53365,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return state.product;
     }
   },
-  actions: (_actions = {
+  actions: {
     //carts
     allCartFromDatabase: function allCartFromDatabase(context) {
       axios.get("getCarts").then(function (response) {
@@ -53394,41 +53373,41 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       })["catch"](function () {
         console.log("Error get carts");
       });
+    },
+    subTotalFromDatabase: function subTotalFromDatabase(context) {
+      axios.get("getCarts").then(function (response) {
+        context.commit('subTotal', response.data.subTotal);
+      })["catch"](function () {
+        console.log("Error get subTotal");
+      });
+    },
+    //Products
+    allProductsFromDatabase: function allProductsFromDatabase(context) {
+      var _this = this;
+
+      axios.get('getProducts').then(function (response) {
+        context.commit('products', response.data.products);
+        console.log(_this.state.products);
+      })["catch"](function () {
+        console.log("Error get products");
+      });
+    },
+    //Product
+    allProductFromDatabase: function allProductFromDatabase(context) {
+      var _this2 = this;
+
+      axios.get('getProduct/' + window.location.href.substr(22)).then(function (response) {
+        context.commit('product', response.data.product);
+        console.log(_this2.state.product);
+      })["catch"](function () {
+        console.log('getProduct/' + window.location.href.substr(30));
+      });
+    },
+    clickIncrementSlug: function clickIncrementSlug(_ref, message) {
+      var commit = _ref.commit;
+      commit('increment', message);
     }
-  }, _defineProperty(_actions, "allCartFromDatabase", function allCartFromDatabase(context) {
-    axios.get("getCarts").then(function (response) {
-      context.commit("carts", response.data.carts);
-    })["catch"](function () {
-      console.log("Error get carts");
-    });
-  }), _defineProperty(_actions, "subTotalFromDatabase", function subTotalFromDatabase(context) {
-    axios.get("getCarts").then(function (response) {
-      context.commit('subTotal', response.data.subTotal);
-    })["catch"](function () {
-      console.log("Error get subTotal");
-    });
-  }), _defineProperty(_actions, "allProductsFromDatabase", function allProductsFromDatabase(context) {
-    var _this = this;
-
-    axios.get('getProducts').then(function (response) {
-      context.commit('products', response.data.products);
-      console.log(_this.state.products);
-    })["catch"](function () {
-      console.log("Error get products");
-    });
-  }), _defineProperty(_actions, "allProductFromDatabase", function allProductFromDatabase(context) {
-    var _this2 = this;
-
-    axios.get('getProduct/' + window.location.href.substr(22)).then(function (response) {
-      context.commit('product', response.data.product);
-      console.log(_this2.state.product);
-    })["catch"](function () {
-      console.log('getProduct/' + window.location.href.substr(30));
-    });
-  }), _defineProperty(_actions, "clickIncrementSlug", function clickIncrementSlug(_ref, message) {
-    var commit = _ref.commit;
-    commit('increment', message);
-  }), _actions),
+  },
   mutations: {
     //carts
     carts: function carts(state, data) {
