@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Products;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Gloudemans\Shoppingcart\Facades\Cart;
 
 class PageProductController extends Controller
 {

@@ -48,10 +48,9 @@ class ProductsController extends Controller
      */
     public function show($slug)
     {
+        $carts = Cart::content();
         $product = Product::where('slug', $slug)->firstOrFail();
-        return view('products.show',[
-            'product' => $product
-        ]);
+        return ['product' => $product, 'carts'=> $carts];
     }
 
     /**

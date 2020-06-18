@@ -1,11 +1,7 @@
 <template>
   <div>
-    <div class="pb-5">
-      <h1
-        class="ml-auto mr-auto col-md-6 text-center"
-        v-if="Object.keys(getAllCart).length === 0"
-      >Votre panier est vide</h1>
-      <div class="container" v-else>
+    <div class="pb-5 pt-5">
+      <div class="container" v-show="invisibleBody">
         <div class="row">
           <div class="col-lg-12 p-5 bg-white rounded shadow-sm mb-5">
             <!-- Shopping cart table -->
@@ -73,7 +69,9 @@
                     </td>
                     <td class="border-0 align-middle">
                       <form @submit.prevent="onDelete(cart.rowId)">
-                        <button @click="rowId = cart.rowId" type="submit">Delete</button>
+                        <button @click="rowId = cart.rowId" type="submit">
+                          <img class="svg" src="images/delete.svg" alt="">
+                        </button>
                       </form>
                     </td>
                   </tr>
@@ -154,7 +152,7 @@
 export default {
   data() {
     return {
-      show: false,
+      invisibleBody: true,
       selected: false,
       rowId: [],
       counts: 5,
@@ -163,17 +161,16 @@ export default {
       }
     };
   },
-  mounted() {
-    this.$store.dispatch("allCartFromDatabase"),
-    this.$store.dispatch("subTotalFromDatabase");
+  created() {
+    this.$store.dispatch("allCartFromDatabase")
+    
   },
   methods: {
-    onChange(event) {
+    onChange(event, rowId) {
       this.form.qty = event.target.value;
       axios
         .patch("http://ecommerce.test/cart/" + this.rowId, this.form)
-        .then(({ data }) => {
-          this.show = true;
+          .then(({ data }) => {
           
         });
     },
@@ -182,7 +179,10 @@ export default {
         .post("http://ecommerce.test/cart/" + this.rowId, this.rowId)
         .then(({ data }) => {
           Vue.delete(this.getAllCart, index);
-          location.reload();
+          if(Object.keys(this.getAllCart).length == 0){
+            location.href= ('/')
+            this.invisibleBody = false
+      }
         });
     }
   },
@@ -195,12 +195,12 @@ export default {
       return parseFloat(total);
     },
     getAllCart: function() {
-      return this.$store.getters.getCartFormGetters;
+      return this.$store.getters.getCartFromGetters;
     },
-    getAllSubTotal: function() {
-      return this.$store.getters.getSubTotalFormGetters;
-    }
-  }
+    
+  },
+  
+
 };
 </script>
 

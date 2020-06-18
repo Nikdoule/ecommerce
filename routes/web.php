@@ -37,7 +37,9 @@ Route::middleware('auth')->middleware('verified')->group(function(){
 
     Route::get('/getProducts', 'Products\ProductsController@index');
     
-    Route::get('/product/{slug}', 'Products\ProductsController@show');
+    Route::get('product/getProduct/{slug}', 'Products\ProductsController@show');
+
+    Route::get('/product/{slug}', 'Products\PageProductController@index');
     //cart
     Route::get('/cart', 'PageCartsController@index')->name('carts.index');
     

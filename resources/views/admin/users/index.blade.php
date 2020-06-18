@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('users')
+@include('includes.menu')
 <div>
     <div>
         <div>
@@ -32,7 +33,7 @@
                                     class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="button-delete"><img class="svg " src="/images/stop.svg"
+                                    <button type="submit" class="button-delete"><img class="svg" src="/images/stop.svg"
                                             alt="bouton supprimer"></button>
                                 </form>
                                 @endcan

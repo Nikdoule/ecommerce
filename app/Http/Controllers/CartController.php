@@ -22,7 +22,7 @@ class CartController extends Controller
         $subTotal = floatval($subTotal);
         $subTotal = number_format($subTotal, 2, '.', '') / 100;
         
-        return ['carts' => $carts,'subTotal' => $subTotal];
+        return ['carts' => $carts];
     }
     /**
      * Show the form for creating a new resource.
@@ -47,7 +47,7 @@ class CartController extends Controller
         });
 
         if ($duplicata->isNotEmpty()) {
-            return redirect()->route('products.index')->with('success', 'le produit a deja ete ajouté');
+            return redirect()->route('products.index');
         }
         $prod = Product::find($request->product_id);
 

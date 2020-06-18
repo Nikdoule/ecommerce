@@ -62,7 +62,7 @@
         </div>
       </div>
       <div class="row mb-2">
-        <div class="col-md-6" v-for="product in getAllProducts" :key="product.id">
+        <div class="col-md-6" v-for="product in getAllProducts.products" :key="product.id">
           <div
             class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative"
           >
@@ -75,7 +75,7 @@
               <a
                 :href="'product/'+product.slug"
                 class="stretched-link btn btn-info"
-              >Continue reading</a>
+              >En savoir plus</a>
             </div>
           </div>
         </div>
@@ -92,17 +92,24 @@ export default {
       tableau:[],
     };
   },
-  mounted() {
+  created() {
     this.$store.dispatch("allProductsFromDatabase");
   },
   
   methods: {
+    // getSlug (value) {
+    //   this.$store.dispatch('pushSlug', value)
+    // }
   },
   
   computed: {
     getAllProducts() {
-      return this.$store.getters.getProductsFromGetters;
+      return this.$store.getters.getProductsFromGetters
     },
+    
+    // getAllSlug() {
+    //   return this.$store.getters.getSlugFromGetters
+    // }
     
    
   }

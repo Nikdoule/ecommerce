@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('edit-profil-user')
+@include('includes.menu')
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -144,8 +145,11 @@
                         <div class="form-group row">
                             <label for="image" class="col-md-4 col-form-label text-md-right">{{ __('Image') }}</label>
                             <div class="col-md-6">
-                                <input name="image" type="file" class="form-control @error('image') is-invalid @enderror" id="image">
-                                <label class="custom-file-label" for="image">Choose file...</label>
+                                <input 
+                                name="image" type="file" class="form-control @error('image') is-invalid 
+                                @enderror" id="image"
+                                >
+                                <label class="custom-file-label" for="image" >Choose image...</label>
                                 @error('image')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
