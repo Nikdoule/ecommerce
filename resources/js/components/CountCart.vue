@@ -14,15 +14,14 @@ export default {
         return {
           hrefcart:'/cart',
           hrefHome:'/',
-
         }
     },
     created() {
-      this.$store.dispatch("allCartFromDatabase")
+      this.$store.dispatch("allProductFromDatabase")
     },
     computed: {
       getAllCart: function() {
-        return this.$store.state.carts;
+        return this.$store.getters.getCartFromGetters;
       },
       
       countTotal() {

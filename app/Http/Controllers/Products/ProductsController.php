@@ -15,9 +15,10 @@ class ProductsController extends Controller
      */
     public function index()
     {
+        $carts = Cart::content();
         $products = Product::inRandomOrder()->take(6)->get();
         
-        return['products' => $products];
+        return['products' => $products,'carts'=> $carts];
     }
     /**
      * Show the form for creating a new resource.

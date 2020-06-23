@@ -1938,11 +1938,11 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
-    this.$store.dispatch("allCartFromDatabase");
+    this.$store.dispatch("allProductFromDatabase");
   },
   computed: {
     getAllCart: function getAllCart() {
-      return this.$store.state.carts;
+      return this.$store.getters.getCartFromGetters;
     },
     countTotal: function countTotal() {
       var cTotal = Object.values(this.getAllCart).reduce(function (t, _ref) {
@@ -2273,20 +2273,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      addProductCart: true,
       duplicate: false,
-      addProduct: false,
+      counts: 5,
       cart: "/cart",
-      home: '/',
-      compteur: 0,
+      home: "/",
+      rowId: "",
       form: {
-        product_id: ""
+        product_id: "",
+        product_qty: 1
       }
     };
   },
-  mounted: function mounted() {},
   created: function created() {
     this.$store.dispatch("allProductFromDatabase");
   },
@@ -2304,30 +2320,38 @@ __webpack_require__.r(__webpack_exports__);
       }, 0);
       return cTotal;
     },
-    counTotalplusCompteur: function counTotalplusCompteur() {
-      var newCount = this.countTotal + this.compteur;
-      return newCount;
-    },
     activeDuplicate: function activeDuplicate() {
       for (var property in this.getCarts) {
-        //console.log(this.getCarts[property].id);
         if (this.getCarts[property].id == this.getProduct.id) {
           this.duplicate = true;
+          this.addProductCart = false;
+          this.form.product_qty = this.getCarts[property].qty;
         }
       }
     }
   },
   methods: {
+    onChange: function onChange(event, rowId) {
+      this.form.qty = event.target.value;
+
+      for (var property in this.getCarts) {
+        if (this.getCarts[property].id == this.getProduct.id) {
+          this.rowId = this.getCarts[property].rowId;
+          this.getCarts[property].qty = this.form.product_qty;
+        }
+      }
+
+      axios.patch("http://ecommerce.test/cart/" + this.rowId, this.form).then(function (_ref2) {
+        var data = _ref2.data;
+      });
+    },
     onSubmit: function onSubmit() {
       var _this = this;
 
-      axios.post("http://ecommerce.test/cart/add", this.form).then(function (_ref2) {
-        var data = _ref2.data;
-
-        if (_this.compteur < 1 && _this.duplicate == false) {
-          _this.compteur++;
-          _this.addProduct = true;
-        }
+      axios.post("http://ecommerce.test/cart/add", this.form).then(function (_ref3) {
+        var data = _ref3.data;
+        _this.tab = data;
+        Vue.set(_this.getCarts, "name", _this.tab);
       });
     }
   }
@@ -2447,6 +2471,9 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     getAllProducts: function getAllProducts() {
       return this.$store.getters.getProductsFromGetters;
+    },
+    getCarts: function getCarts() {
+      return this.$store.getters.getCartFromGetters;
     } // getAllSlug() {
     //   return this.$store.getters.getSlugFromGetters
     // }
@@ -40095,22 +40122,6 @@ var render = function() {
             ],
             staticClass: "alert alert-success"
           },
-          [_vm._v("vous avez déjà ajouté cette article au panier!")]
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          {
-            directives: [
-              {
-                name: "show",
-                rawName: "v-show",
-                value: _vm.addProduct,
-                expression: "addProduct"
-              }
-            ],
-            staticClass: "alert alert-success"
-          },
           [_vm._v("L'article vient d'être ajouté au panier!")]
         ),
         _vm._v(" "),
@@ -40159,16 +40170,83 @@ var render = function() {
                     _c(
                       "button",
                       {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.addProductCart,
+                            expression: "addProductCart"
+                          }
+                        ],
                         staticClass: "btn btn-success",
                         attrs: { type: "submit" },
                         on: {
                           click: function($event) {
-                            ;(_vm.form.product_id = _vm.getProduct.id),
-                              _vm.activeDuplicate
+                            _vm.form.product_id = _vm.getProduct.id
                           }
                         }
                       },
-                      [_vm._v("Ajouter au panier")]
+                      [
+                        _vm._v(
+                          "Ajouter au panier " + _vm._s(_vm.activeDuplicate)
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.form.product_qty,
+                            expression: "form.product_qty"
+                          }
+                        ],
+                        staticClass: "custom-select",
+                        attrs: { name: "qty", id: "qty" },
+                        on: {
+                          change: [
+                            function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.form,
+                                "product_qty",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            },
+                            function($event) {
+                              $event.preventDefault()
+                              return _vm.onChange($event)
+                            }
+                          ]
+                        }
+                      },
+                      _vm._l(_vm.counts, function(count) {
+                        return _c(
+                          "option",
+                          {
+                            key: count.id,
+                            attrs: { placeholder: "choissez votre quantité" },
+                            domProps: {
+                              value: count,
+                              selected: count == _vm.form.product_qty
+                            }
+                          },
+                          [_vm._v(_vm._s(count))]
+                        )
+                      }),
+                      0
                     ),
                     _vm._v(" "),
                     _c(
@@ -40189,7 +40267,7 @@ var render = function() {
                         _c(
                           "span",
                           { staticClass: "badge badge-pill badge-dark" },
-                          [_vm._v(_vm._s(_vm.counTotalplusCompteur))]
+                          [_vm._v(_vm._s(_vm.countTotal))]
                         )
                       ]
                     ),
@@ -54233,9 +54311,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
-    carts: [],
-    products: [],
-    product: []
+    carts: {},
+    products: {},
+    product: {}
   },
   getters: {
     //carts
@@ -54301,8 +54379,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 2:
                 data = _context2.sent.data;
                 context.commit('products', data);
+                context.commit('carts', data.carts);
 
-              case 4:
+              case 5:
               case "end":
                 return _context2.stop();
             }

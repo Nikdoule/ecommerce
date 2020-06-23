@@ -106,7 +106,9 @@ export default {
     getAllProducts() {
       return this.$store.getters.getProductsFromGetters
     },
-    
+    getCarts() {
+      return this.$store.getters.getCartFromGetters;
+    },
     // getAllSlug() {
     //   return this.$store.getters.getSlugFromGetters
     // }

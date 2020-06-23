@@ -51,7 +51,9 @@ class CartController extends Controller
         }
         $prod = Product::find($request->product_id);
 
-        Cart::add($prod->id, $prod->title, 1, $prod->price)->associate('App\Product');
+        $data = Cart::add($prod->id, $prod->title, $request->product_qty, $prod->price)->associate('App\Product');
+        
+        return $data;
 
     }
 

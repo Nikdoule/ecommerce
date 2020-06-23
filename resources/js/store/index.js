@@ -1,9 +1,8 @@
 export default {
     state: {
-        
-        carts:[],
-        products:[],
-        product:[],
+        carts:{},
+        products:{},
+        product:{},
 
     },
 
@@ -49,6 +48,7 @@ export default {
         async allProductsFromDatabase(context) {
             let data = (await axios.get('getProducts')).data;
             context.commit('products', data)
+            context.commit('carts', data.carts)
         },
         //Product
         async allProductFromDatabase(context) {

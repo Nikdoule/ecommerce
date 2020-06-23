@@ -2,8 +2,7 @@
   <div>
     <div class="row mb-2 justify-content-center">
       <div class="col-md-6">
-        <div v-show="duplicate" class="alert alert-success">vous avez déjà ajouté cette article au panier!</div>
-        <div v-show="addProduct" class="alert alert-success">L'article vient d'être ajouté au panier!</div>
+        <div v-show="duplicate" class="alert alert-success">L'article vient d'être ajouté au panier!</div>
         <div
           class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative"
         >
@@ -15,13 +14,29 @@
             <p class="card-text mb-auto">{{ getProduct.price / 100 }} €</p>
             <form @submit.prevent="onSubmit">
               <button
-                @click="form.product_id = getProduct.id, activeDuplicate"
+                v-show="addProductCart"
+                @click="form.product_id = getProduct.id"
                 type="submit"
                 class="btn btn-success"
-              >Ajouter au panier</button>
+              >Ajouter au panier {{ activeDuplicate }}</button>
+              <select
+                @change.prevent="onChange($event)"
+                v-model="form.product_qty"
+                name="qty"
+                id="qty"
+                class="custom-select"
+              >
+                <option
+                  placeholder="choissez votre quantité"
+                  v-for="count in counts"
+                  :key="count.id"
+                  :value="count"
+                  :selected="count == form.product_qty"
+                >{{ count }}</option>
+              </select>
               <a :href="cart" type="submit" class="btn btn-success">
                 <img class="svg" src="/images/shopping-cart.svg" alt="cart" />
-                <span class="badge badge-pill badge-dark">{{counTotalplusCompteur}}</span>
+                <span class="badge badge-pill badge-dark">{{ countTotal }}</span>
               </a>
               <a :href="home" type="submit" class="btn btn-success">
                 <span>Continuer mes achats</span>
@@ -37,18 +52,17 @@
 export default {
   data() {
     return {
+      addProductCart: true,
       duplicate: false,
-      addProduct: false,
+      counts: 5,
       cart: "/cart",
-      home: '/',
-      compteur: 0,
+      home: "/",
+      rowId: "",
       form: {
-        product_id: ""
+        product_id: "",
+        product_qty: 1
       }
     };
-  },
-  mounted() {
-    
   },
   created() {
     this.$store.dispatch("allProductFromDatabase");
@@ -58,6 +72,7 @@ export default {
       return this.$store.getters.getProductFromGetters;
     },
     getCarts() {
+
       return this.$store.getters.getCartFromGetters;
     },
     countTotal() {
@@ -68,31 +83,36 @@ export default {
 
       return cTotal;
     },
-
-    counTotalplusCompteur() {
-      let newCount = this.countTotal + this.compteur;
-      return newCount;
-    },
     activeDuplicate() {
-      for(const property in this.getCarts){
-          //console.log(this.getCarts[property].id);
-        if(this.getCarts[property].id == this.getProduct.id){
-          this.duplicate = true
+      for (const property in this.getCarts) {
+        if (this.getCarts[property].id == this.getProduct.id) {
+          this.duplicate = true;
+          this.addProductCart = false;
+          this.form.product_qty = this.getCarts[property].qty;
         }
       }
-
-    },
-    
+    }
   },
   methods: {
+    onChange(event, rowId) {
+      this.form.qty = event.target.value;
+      for (const property in this.getCarts) {
+        if (this.getCarts[property].id == this.getProduct.id) {
+          this.rowId = this.getCarts[property].rowId;
+          this.getCarts[property].qty = this.form.product_qty;
+        }
+      }
+      axios
+        .patch("http://ecommerce.test/cart/" + this.rowId, this.form)
+        .then(({ data }) => {});
+    },
     onSubmit() {
       axios
         .post("http://ecommerce.test/cart/add", this.form)
         .then(({ data }) => {
-          if (this.compteur < 1 && this.duplicate == false) {
-            this.compteur++;
-            this.addProduct = true
-          }
+          this.tab = data;
+          Vue.set(this.getCarts, "name", this.tab);
+
         });
     }
   }
