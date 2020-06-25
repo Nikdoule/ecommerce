@@ -39,7 +39,7 @@ export default {
   props: ["users"],
   methods: {
         onDelete(){
-                alert('http://ecommerce.test/admin/users/'+this.user.id)
+          alert('http://ecommerce.test/admin/users/'+this.user.id)
         }
   },
   mounted() {

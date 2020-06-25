@@ -1993,25 +1993,47 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["user", "roles", "role"],
+  props: ["user", "roles", 'rolesUser'],
   data: function data() {
     return {
+      changeOk: false,
       checked: true,
-      roleUserId: this.role,
-      roles: [],
-      rolesTable: []
+      form: {
+        name: this.user.name,
+        email: this.user.email,
+        roles: this.rolesUser
+      }
     };
   },
+  computed: {
+    getRolesUser: function getRolesUser() {
+      var getRoles = [];
+
+      for (var property in this.rolesUser) {
+        getRoles.push(this.rolesUser[property].id);
+        this.tab.roles = getRoles;
+      }
+
+      return getRoles;
+    }
+  },
   methods: {
-    onSubmit: function onSubmit(evt) {
+    updateSubmit: function updateSubmit() {
       var _this = this;
 
-      evt.preventDefault();
-      axios.patch("http://ecommerce.test/admin/users/" + this.user.id, this.rolesTable).then(function (_ref) {
+      axios.patch("/admin/users/" + this.user.id, this.form).then(function (_ref) {
         var data = _ref.data;
-        alert(_this.rolesTable);
+        _this.changeOk = true;
       });
+    },
+    check: function check(e) {
+      console.log(this.tab.roles);
     }
   }
 });
@@ -2238,6 +2260,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
 //
 //
 //
@@ -39554,7 +39577,23 @@ var render = function() {
   return _c("div", { staticClass: "container" }, [
     _c("div", { staticClass: "row justify-content-center" }, [
       _c("div", { staticClass: "col-md-8" }, [
-        _c("div", { staticClass: "card" }, [
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.changeOk,
+                expression: "changeOk"
+              }
+            ],
+            staticClass: "alert alert-success mt-3"
+          },
+          [_vm._v("Les modifications sont un succès!")]
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "card mt-3" }, [
           _c("div", { staticClass: "card-header" }, [
             _vm._v("Edit user " + _vm._s(_vm.user.name))
           ]),
@@ -39566,57 +39605,133 @@ var render = function() {
                 on: {
                   submit: function($event) {
                     $event.preventDefault()
-                    return _vm.onSubmit($event)
+                    return _vm.updateSubmit($event)
                   }
                 }
               },
               [
+                _c(
+                  "label",
+                  {
+                    staticClass: "form-check-label",
+                    attrs: { for: _vm.user.name }
+                  },
+                  [_vm._v("Name")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.form.name,
+                      expression: "form.name"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { id: "name", type: "text" },
+                  domProps: { value: _vm.form.name },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.form, "name", $event.target.value)
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "label",
+                  {
+                    staticClass: "form-check-label",
+                    attrs: { for: _vm.user.name }
+                  },
+                  [_vm._v("Email")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.form.email,
+                      expression: "form.email"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { id: "email", type: "email" },
+                  domProps: { value: _vm.form.email },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.form, "email", $event.target.value)
+                    }
+                  }
+                }),
+                _vm._v(" "),
                 _vm._l(_vm.roles, function(role) {
                   return _c(
                     "div",
-                    { key: role.id, staticClass: "form-group forme-check" },
+                    { key: role.index, staticClass: "form-group forme-check" },
                     [
                       _c("input", {
                         directives: [
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.rolesTable,
-                            expression: "rolesTable"
+                            value: _vm.form.roles,
+                            expression: "form.roles"
                           }
                         ],
-                        staticClass: "form-check-input ml-3",
+                        staticClass: "form-check-input ml-1",
                         attrs: {
                           type: "checkbox",
-                          name: _vm.roles,
+                          name: "roles[]",
                           id: role.id
                         },
                         domProps: {
                           value: role.id,
-                          checked: Array.isArray(_vm.rolesTable)
-                            ? _vm._i(_vm.rolesTable, role.id) > -1
-                            : _vm.rolesTable
+                          checked: Array.isArray(_vm.form.roles)
+                            ? _vm._i(_vm.form.roles, role.id) > -1
+                            : _vm.form.roles
                         },
                         on: {
-                          change: function($event) {
-                            var $$a = _vm.rolesTable,
-                              $$el = $event.target,
-                              $$c = $$el.checked ? true : false
-                            if (Array.isArray($$a)) {
-                              var $$v = role.id,
-                                $$i = _vm._i($$a, $$v)
-                              if ($$el.checked) {
-                                $$i < 0 && (_vm.rolesTable = $$a.concat([$$v]))
+                          change: [
+                            function($event) {
+                              var $$a = _vm.form.roles,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = role.id,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    _vm.$set(
+                                      _vm.form,
+                                      "roles",
+                                      $$a.concat([$$v])
+                                    )
+                                } else {
+                                  $$i > -1 &&
+                                    _vm.$set(
+                                      _vm.form,
+                                      "roles",
+                                      $$a
+                                        .slice(0, $$i)
+                                        .concat($$a.slice($$i + 1))
+                                    )
+                                }
                               } else {
-                                $$i > -1 &&
-                                  (_vm.rolesTable = $$a
-                                    .slice(0, $$i)
-                                    .concat($$a.slice($$i + 1)))
+                                _vm.$set(_vm.form, "roles", $$c)
                               }
-                            } else {
-                              _vm.rolesTable = $$c
+                            },
+                            function($event) {
+                              return _vm.check($event)
                             }
-                          }
+                          ]
                         }
                       }),
                       _vm._v(" "),
@@ -39635,7 +39750,7 @@ var render = function() {
                 _c(
                   "button",
                   { staticClass: "btn btn-primary", attrs: { type: "submit" } },
-                  [_vm._v("Modifier")]
+                  [_vm._v("Change informations")]
                 )
               ],
               2
@@ -40107,7 +40222,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("div", { staticClass: "row mb-2 justify-content-center" }, [
+    _c("div", { staticClass: "row mb-2 mt-5 justify-content-center" }, [
       _c("div", { staticClass: "col-md-6" }, [
         _c(
           "div",
@@ -40152,6 +40267,10 @@ var render = function() {
                   _vm._v(_vm._s(_vm.getProduct.subtitle))
                 ]),
                 _vm._v(" "),
+                _c("div", { staticClass: "mb-1 text-muted" }, [
+                  _vm._v(_vm._s(_vm.getProduct.subtitle))
+                ]),
+                _vm._v(" "),
                 _c("p", { staticClass: "card-text mb-auto" }, [
                   _vm._v(_vm._s(_vm.getProduct.price / 100) + " €")
                 ]),
@@ -40167,119 +40286,100 @@ var render = function() {
                     }
                   },
                   [
-                    _c(
-                      "button",
-                      {
-                        directives: [
-                          {
-                            name: "show",
-                            rawName: "v-show",
-                            value: _vm.addProductCart,
-                            expression: "addProductCart"
+                    _c("div", { staticClass: "d-flex col-4 pl-0" }, [
+                      _c(
+                        "button",
+                        {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.addProductCart,
+                              expression: "addProductCart"
+                            }
+                          ],
+                          staticClass: "btn btn-success col-10",
+                          attrs: { type: "submit" },
+                          on: {
+                            click: function($event) {
+                              _vm.form.product_id = _vm.getProduct.id
+                            }
                           }
-                        ],
-                        staticClass: "btn btn-success",
-                        attrs: { type: "submit" },
-                        on: {
-                          click: function($event) {
-                            _vm.form.product_id = _vm.getProduct.id
+                        },
+                        [
+                          _vm._v(
+                            "Ajouter au panier " + _vm._s(_vm.activeDuplicate)
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.form.product_qty,
+                              expression: "form.product_qty"
+                            }
+                          ],
+                          staticClass: "custom-select",
+                          attrs: { name: "qty", id: "qty" },
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.form,
+                                  "product_qty",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              },
+                              function($event) {
+                                $event.preventDefault()
+                                return _vm.onChange($event)
+                              }
+                            ]
                           }
-                        }
-                      },
-                      [
-                        _vm._v(
-                          "Ajouter au panier " + _vm._s(_vm.activeDuplicate)
-                        )
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "select",
-                      {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.form.product_qty,
-                            expression: "form.product_qty"
-                          }
-                        ],
-                        staticClass: "custom-select",
-                        attrs: { name: "qty", id: "qty" },
-                        on: {
-                          change: [
-                            function($event) {
-                              var $$selectedVal = Array.prototype.filter
-                                .call($event.target.options, function(o) {
-                                  return o.selected
-                                })
-                                .map(function(o) {
-                                  var val = "_value" in o ? o._value : o.value
-                                  return val
-                                })
-                              _vm.$set(
-                                _vm.form,
-                                "product_qty",
-                                $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              )
+                        },
+                        _vm._l(_vm.counts, function(count) {
+                          return _c(
+                            "option",
+                            {
+                              key: count.id,
+                              attrs: { placeholder: "choissez votre quantité" },
+                              domProps: {
+                                value: count,
+                                selected: count == _vm.form.product_qty
+                              }
                             },
-                            function($event) {
-                              $event.preventDefault()
-                              return _vm.onChange($event)
-                            }
-                          ]
-                        }
-                      },
-                      _vm._l(_vm.counts, function(count) {
-                        return _c(
-                          "option",
-                          {
-                            key: count.id,
-                            attrs: { placeholder: "choissez votre quantité" },
-                            domProps: {
-                              value: count,
-                              selected: count == _vm.form.product_qty
-                            }
-                          },
-                          [_vm._v(_vm._s(count))]
-                        )
-                      }),
-                      0
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "btn btn-success",
-                        attrs: { href: _vm.cart, type: "submit" }
-                      },
-                      [
-                        _c("img", {
-                          staticClass: "svg",
-                          attrs: {
-                            src: "/images/shopping-cart.svg",
-                            alt: "cart"
-                          }
+                            [_vm._v(_vm._s(count))]
+                          )
                         }),
-                        _vm._v(" "),
-                        _c(
-                          "span",
-                          { staticClass: "badge badge-pill badge-dark" },
-                          [_vm._v(_vm._s(_vm.countTotal))]
-                        )
-                      ]
-                    ),
+                        0
+                      )
+                    ]),
                     _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "btn btn-success",
-                        attrs: { href: _vm.home, type: "submit" }
-                      },
-                      [_c("span", [_vm._v("Continuer mes achats")])]
-                    )
+                    _c("div", { staticClass: "d-flex col-4 pl-0 mt-3" }, [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "btn btn-success",
+                          attrs: { href: _vm.home, type: "submit" }
+                        },
+                        [_c("span", [_vm._v("Continuer mes achats")])]
+                      )
+                    ])
                   ]
                 )
               ]

@@ -68,12 +68,15 @@ class UsersController extends Controller
             
             return redirect()->route('admin.users.index');
         }
-        
         $roles = Role::all();
+
+        $rolesUser = $user->roles->pluck('id');
+    
 
         return view("admin.users.edit", [
             'user' => $user,
             'roles' => $roles,
+            'rolesUser' => $rolesUser
         ]);
     }
 
@@ -90,9 +93,6 @@ class UsersController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->save();
-
-        return redirect()->route('admin.users.index');
-        
     }
 
     /**

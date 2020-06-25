@@ -19,8 +19,9 @@ Route::middleware('auth')->middleware('verified')->group(function(){
     //admin
     Route::namespace('Admin')->prefix('admin')->name('admin.')->middleware('can:manage-users')->group(function() {
         Route::resource('users', 'UsersController');
+        
     });
-
+    
     //user
     Route::namespace('Profil')->prefix('profil')->name('profil.')->group(function() {
         Route::resource('users', 'ProfilController');
@@ -59,8 +60,7 @@ Route::middleware('auth')->middleware('verified')->group(function(){
 
     Route::get('/thankyou', 'CheckoutController@thankYou')->name('checkout.thankYou');
 
-    //test
-    Route::get('/test/ok', 'TestController@index');
+    
 });
 
 Auth::routes(['verify' => true]);
