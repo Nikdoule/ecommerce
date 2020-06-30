@@ -8,7 +8,7 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 
 class PageProductController extends Controller
 {
-    public function index()
+    public function show()
     {
         return view('products.show');
     }

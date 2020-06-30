@@ -25,10 +25,12 @@ const store = new Vuex.Store(
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
-Vue.component('user-component', require('./components/Edit-user.vue').default);
+Vue.component('edit_admin-component', require('./components/Edit-user.vue').default);
+Vue.component('index_admin-component', require('./components/User-list.vue').default);
 Vue.component('products-component', require('./components/ViewProducts.vue').default);
 Vue.component('product-component', require('./components/ViewProduct.vue').default);
 Vue.component('cart-component', require('./components/ViewCart.vue').default);
+
 Vue.component('count-component', require('./components/CountCart.vue').default);
 
 /**

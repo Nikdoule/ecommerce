@@ -3,7 +3,7 @@
 @section('users')
 @include('includes.menu')
 <div>
-    <div>
+    {{-- <div>
         <div>
             <div class="card mt-5">
                 <div class="card-header">Users list</div>
@@ -41,10 +41,10 @@
                             @endforeach
                         </tbody>
                     </table>
-
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
+<index_admin-component></index_admin-component>
 </div>
 @endsection

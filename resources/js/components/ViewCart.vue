@@ -69,8 +69,8 @@
                     </td>
                     <td class="border-0 align-middle">
                       <form @submit.prevent="onDelete(cart.rowId)">
-                        <button @click="rowId = cart.rowId" type="submit">
-                          <img class="svg" src="images/delete.svg" alt="">
+                        <button type="submit">
+                          <img class="svg" :src="'../images/delete.svg'" alt="">
                         </button>
                       </form>
                     </td>
@@ -154,7 +154,6 @@ export default {
     return {
       invisibleBody: true,
       selected: false,
-      rowId: [],
       counts: 5,
       form: {
         qty: ""
@@ -163,20 +162,19 @@ export default {
   },
   created() {
     this.$store.dispatch("allCartFromDatabase")
-    
   },
   methods: {
     onChange(event, rowId) {
       this.form.qty = event.target.value;
       axios
-        .patch("http://ecommerce.test/cart/" + this.rowId, this.form)
+        .patch("/cart/" + this.rowId, this.form)
           .then(({ data }) => {
           
         });
     },
     onDelete(index) {
       axios
-        .post("http://ecommerce.test/cart/" + this.rowId, this.rowId)
+        .delete("/cart/" + index, index)
         .then(({ data }) => {
           Vue.delete(this.getAllCart, index);
           if(Object.keys(this.getAllCart).length == 0){

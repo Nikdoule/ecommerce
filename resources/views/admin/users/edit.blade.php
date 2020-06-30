@@ -3,7 +3,6 @@
 @section('edit-user')
 @include('includes.menu')
 <div class="container">
-   
-<user-component :user="{{ $user }}" :roles="{{ $roles }}" :roles-user="{{ $rolesUser }}"></user-component>
+<edit_admin-component></edit_admin-component>
 </div>
 @endsection

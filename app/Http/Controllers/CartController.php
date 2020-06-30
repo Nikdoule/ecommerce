@@ -113,6 +113,5 @@ class CartController extends Controller
     {
        $cart = Cart::remove($rowId);
 
-       return back()->with('success', 'Le produit à bien été supprimé');
     }
 }

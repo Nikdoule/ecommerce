@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Role;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class UsersController extends Controller
@@ -15,13 +17,15 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(User $user)
     {
-        $users = User::all();
+        $auth = Auth::user();
+
+        $role_auth = $auth->roles->pluck('name');
+
+        $users = User::with('roles')->get();
         
-        return view('admin.users.index',[
-            'users' => $users,
-        ]);
+        return ['users' => $users,'auth' => $role_auth];
     }
 
     /**
@@ -62,22 +66,23 @@ class UsersController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit($user_id)
     {
+        $user = User::find($user_id);
         if (Gate::denies('edit-users')) {
             
             return redirect()->route('admin.users.index');
         }
         $roles = Role::all();
 
+        $auth = Auth::user();
+        
         $rolesUser = $user->roles->pluck('id');
-    
 
-        return view("admin.users.edit", [
-            'user' => $user,
-            'roles' => $roles,
-            'rolesUser' => $rolesUser
-        ]);
+        $role_auth = $auth->roles->pluck('name');
+
+
+        return ['user' => $user,'roles' => $roles,'rolesUser' => $rolesUser,'auth' => $role_auth];
     }
 
     /**
@@ -87,8 +92,10 @@ class UsersController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $user_id)
     {
+        $user = User::find($user_id);
+
         $user->roles()->sync($request->roles);
         $user->name = $request->name;
         $user->email = $request->email;
@@ -101,15 +108,15 @@ class UsersController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($user_id)
     {
+        $user = User::find($user_id);
+        
         if (Gate::denies('delete-users')) {
-           
-            return redirect()->route('admin.users.index');
+
         }
         $user->roles()->detach();
         $user->delete();
-
-        return redirect()->route('admin.users.index');
+        
     }
 }

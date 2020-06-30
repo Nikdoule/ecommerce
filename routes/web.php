@@ -18,8 +18,9 @@ Route::middleware('auth')->middleware('verified')->group(function(){
     
     //admin
     Route::namespace('Admin')->prefix('admin')->name('admin.')->middleware('can:manage-users')->group(function() {
-        Route::resource('users', 'UsersController');
-        
+
+        Route::resource('getUsers', 'UsersController');
+        Route::resource('users', 'PageUsersController');
     });
     
     //user
@@ -38,9 +39,9 @@ Route::middleware('auth')->middleware('verified')->group(function(){
 
     Route::get('/getProducts', 'Products\ProductsController@index');
     
-    Route::get('product/getProduct/{slug}', 'Products\ProductsController@show');
+    Route::resource('/getProduct', 'Products\ProductsController');
 
-    Route::get('/product/{slug}', 'Products\PageProductController@index');
+    Route::resource('/product', 'Products\PageProductController');
     //cart
     Route::get('/cart', 'PageCartsController@index')->name('carts.index');
     
@@ -50,7 +51,7 @@ Route::middleware('auth')->middleware('verified')->group(function(){
 
     Route::patch('/cart/{rowId}', 'CartController@update')->name('cart.update');
 
-    Route::post('/cart/{rowId}', 'CartController@destroy')->name('cart.destroy');
+    Route::delete('/cart/{rowId}', 'CartController@destroy')->name('cart.destroy');
 
 
     //payement

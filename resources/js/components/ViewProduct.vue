@@ -12,7 +12,7 @@
             <h5 class="mb-0">{{ getProduct.title }}</h5>
             <div class="mb-1 text-muted">{{ getProduct.subtitle }}</div>
             <div class="mb-1 text-muted">{{ getProduct.subtitle }}</div>
-            <p class="card-text mb-auto">{{ getProduct.price / 100 }} €</p>
+            <p class="card-text mb-auto">{{ getProduct.price / 100 * form.product_qty }} €</p>
             <form @submit.prevent="onSubmit">
               <div class="d-flex col-4 pl-0">
                 <button
@@ -103,12 +103,12 @@ export default {
         }
       }
       axios
-        .patch("http://ecommerce.test/cart/" + this.rowId, this.form)
+        .patch("/cart/" + this.rowId, this.form)
         .then(({ data }) => {});
     },
     onSubmit() {
       axios
-        .post("http://ecommerce.test/cart/add", this.form)
+        .post("/cart/add", this.form)
         .then(({ data }) => {
           this.tab = data;
           Vue.set(this.getCarts, "name", this.tab);
