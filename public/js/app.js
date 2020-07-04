@@ -1999,8 +1999,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2031,8 +2029,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     deleteRole: function deleteRole() {
       for (var property in this.getRoleAuth) {
-        if (this.getRoleAuth[property] !== 'super-admin') {
+        if (this.getRoleAuth[0] !== 'super-admin') {
           this.getRoles.splice(0, 1);
+          return this.getRolesUser;
         }
       }
     },
@@ -39708,21 +39707,6 @@ var render = function() {
           [_vm._v("Les modifications sont un succès!")]
         ),
         _vm._v(" "),
-        _c(
-          "div",
-          {
-            directives: [
-              {
-                name: "show",
-                rawName: "v-show",
-                value: false,
-                expression: "false"
-              }
-            ]
-          },
-          [_vm._v(_vm._s(_vm.getRolesUser))]
-        ),
-        _vm._v(" "),
         _c("div", { staticClass: "card mt-3" }, [
           _c("div", { staticClass: "card-header" }, [
             _vm._v("Edit user " + _vm._s(_vm.getUser.name))
@@ -39732,6 +39716,7 @@ var render = function() {
             _c(
               "form",
               {
+                attrs: { role: _vm.deleteRole },
                 on: {
                   submit: function($event) {
                     $event.preventDefault()
@@ -39807,11 +39792,6 @@ var render = function() {
                     "div",
                     { key: role.index, staticClass: "form-group forme-check" },
                     [
-                      _vm._v(
-                        "\n              " +
-                          _vm._s(_vm.deleteRole) +
-                          "\n              "
-                      ),
                       _c("input", {
                         directives: [
                           {
@@ -39824,7 +39804,7 @@ var render = function() {
                         staticClass: "form-check-input ml-1",
                         attrs: {
                           type: "checkbox",
-                          name: "roles[]",
+                          name: role.name,
                           id: role.id
                         },
                         domProps: {

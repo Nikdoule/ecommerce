@@ -3,21 +3,19 @@
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div v-show="changeOk" class="alert alert-success mt-3">Les modifications sont un succès!</div>
-        <div v-show="false">{{ getRolesUser }}</div>
         <div class="card mt-3">
           <div class="card-header">Edit user {{ getUser.name }}</div>
           <div class="card-body">
-            <form @submit.prevent="updateSubmit">
+            <form @submit.prevent="updateSubmit" :role="deleteRole">
               <label :for="getUser.name" class="form-check-label">Name</label>
               <input class="form-control" id="name" type="text" v-model="form.name" />
               <label :for="getUser.name" class="form-check-label">Email</label>
               <input class="form-control" id="email" type="email" v-model="form.email" />
-              <div class="form-group forme-check" v-for="role in getRoles" :key="role.index">
-                {{deleteRole}}
+              <div class="form-group forme-check" v-for="role in getRoles"  :key="role.index">
                 <input
                   class="form-check-input ml-1"
                   type="checkbox"
-                  name="roles[]"
+                  :name="role.name"
                   :id="role.id"
                   :value="role.id"
                   v-model="form.roles"
@@ -65,8 +63,9 @@ export default {
     },
     deleteRole() {
       for (const property in this.getRoleAuth) {
-        if (this.getRoleAuth[property] !== 'super-admin') {
+        if (this.getRoleAuth[0] !== 'super-admin') {
           this.getRoles.splice(0, 1)
+          return this.getRolesUser
         }
       }
     },
