@@ -24,12 +24,13 @@ Route::middleware('auth')->middleware('verified')->group(function(){
     });
     
     //user
-    Route::namespace('Profil')->prefix('profil')->name('profil.')->group(function() {
-        Route::resource('users', 'ProfilController');
+    Route::namespace('Profil')->prefix('edit')->name('profil.edit')->group(function() {
+        Route::get('getProfil', 'ProfilController@edit');
+        Route::patch('/users/{user}', 'ProfilController@update');
         
     });
     Route::namespace('Profil')->prefix('edit')->name('edit.users')->group(function() {
-        Route::get('users', 'ProfilController@edit');
+        Route::get('users', 'PageProfilController@edit');
         
     });
 

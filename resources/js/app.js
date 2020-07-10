@@ -30,9 +30,10 @@ Vue.component('index_admin-component', require('./components/User-list.vue').def
 Vue.component('products-component', require('./components/ViewProducts.vue').default);
 Vue.component('product-component', require('./components/ViewProduct.vue').default);
 Vue.component('cart-component', require('./components/ViewCart.vue').default);
+Vue.component('profil-component', require('./components/EditAuthProfil.vue').default);
 
 Vue.component('count-component', require('./components/CountCart.vue').default);
-
+Vue.component('image-component', require('./components/ImageProfil.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

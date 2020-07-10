@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Products;
-use App\Product;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Gloudemans\Shoppingcart\Facades\Cart;
+namespace App\Http\Controllers\Profil;
 
-class ProductsController extends Controller
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class PageProfilController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,11 +14,9 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        $carts = Cart::content();
-        $products = Product::inRandomOrder()->take(6)->get();
-        
-        return['products' => $products];
+        //
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -37,7 +34,7 @@ class ProductsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    { 
+    {
         //
     }
 
@@ -47,10 +44,9 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
+    public function show($id)
     {
-        $product = Product::where('slug', $slug)->firstOrFail();
-        return ['product' => $product];
+        //
     }
 
     /**
@@ -59,9 +55,9 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit()
     {
-        //
+        return view('profil.users.edit');
     }
 
     /**

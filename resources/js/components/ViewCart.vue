@@ -28,7 +28,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="cart in getAllCart" :key="cart.id">
+                  <tr v-for="cart in carts" :key="cart.id">
                     <th scope="row" class="border-0">
                       <div class="p-2">
                         <img
@@ -70,7 +70,7 @@
                     <td class="border-0 align-middle">
                       <form @submit.prevent="onDelete(cart.rowId)">
                         <button type="submit">
-                          <img class="svg" :src="'../images/delete.svg'" alt="">
+                          <img class="svg" :src="'../images/delete.svg'" alt />
                         </button>
                       </form>
                     </td>
@@ -149,6 +149,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -161,44 +162,33 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("allCartFromDatabase")
-  },
-  methods: {
-    onChange(event, rowId) {
-      this.form.qty = event.target.value;
-      axios
-        .patch("/cart/" + this.rowId, this.form)
-          .then(({ data }) => {
-          
-        });
-    },
-    onDelete(index) {
-      axios
-        .delete("/cart/" + index, index)
-        .then(({ data }) => {
-          Vue.delete(this.getAllCart, index);
-          if(Object.keys(this.getAllCart).length == 0){
-            location.href= ('/')
-            this.invisibleBody = false
-      }
-        });
-    }
+    this.$store.dispatch("allCartFromDatabase");
   },
   computed: {
+    ...mapState(["carts"]),
     total: function() {
-      let total = Object.values(this.getAllCart).reduce(
+      let total = Object.values(this.carts).reduce(
         (t, { subtotal }) => t + subtotal,
         0
       );
       return parseFloat(total);
-    },
-    getAllCart: function() {
-      return this.$store.getters.getCartFromGetters;
-    },
-    
+    }
   },
-  
-
+  methods: {
+    onChange(event, rowId) {
+      this.form.qty = event.target.value;
+      axios.patch("/cart/" + this.rowId, this.form).then(({ data }) => {});
+    },
+    onDelete(index) {
+      axios.delete("/cart/" + index, index).then(({ data }) => {
+        Vue.delete(this.carts, index);
+        if (Object.keys(this.carts).length == 0) {
+          location.href = "/";
+          this.invisibleBody = false;
+        }
+      });
+    }
+  }
 };
 </script>
 

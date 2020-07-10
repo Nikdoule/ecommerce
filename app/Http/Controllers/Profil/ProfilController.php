@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Gloudemans\Shoppingcart\Facades\Cart;
 
 class ProfilController extends Controller
 {
@@ -58,12 +59,13 @@ class ProfilController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit()
     {
+        $carts = Cart::content();
+        
         $user = Auth::user();
-        return view('profil.users.edit',[
-            'user' => $user
-        ]);
+
+        return ['user' => $user, 'carts' => $carts];
     }
 
     /**
@@ -85,11 +87,17 @@ class ProfilController extends Controller
         $user->city = $request->city;
         $user->image = $request->image;
         $user->phone = $request->phone;
-        $this->storeImage($user);
 
+        if($request->image)
+        {
+            $image = $request->get('image');
+            $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
+            \Image::make($request->get('image'))->save(public_path('images/').$name);
+        }
+        $user->image = '/images/'.$name;
         $user->save();
 
-        return redirect()->route('edit.users')->with('success', 'Votre profil à bien été modifié');
+        return response()->json(['success' => 'You have successfully uploaded an image'], 200);
     }
 
     /**

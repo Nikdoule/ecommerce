@@ -78,20 +78,10 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
             
         ]);
-        $this->storeImage($user);
         $role = Role::select('id')->where('name', 'guest')->first();
         $user->roles()->attach($role);
 
         return $user;
     }
 
-    private function storeImage(User $user)
-    {
-        if(request('image')){
-            $user->update([
-                'image' => request('image')->store('avatars', 'public')
-            ]);
-        }
-
-    }
 }

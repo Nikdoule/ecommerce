@@ -1,16 +1,42 @@
 export default {
     state: {
-        carts:{},
-        products:{},
-        product:{},
-        users:{},
-        user:{},
+        carts: {},
+        products: {},
+        product: {},
+        users: {},
+        user: {},
         rolesAuth: {},
-        roles:{},
-        rolesUser:[]
+        roles: {},
+        rolesUser: [],
+        profilUser: {},
+        todos: [{
+                id: 1,
+                text: '...',
+                done: true
+            },
+            {
+                id: 2,
+                text: '...',
+                done: false
+            }
+        ]
     },
 
     getters: {
+        getTotal: state => {
+            let cTotal = Object.values(state.carts).reduce(
+                (t, {
+                    qty
+                }) => t + Number(qty),
+                0
+            );
+
+            return cTotal;
+        },
+        getProfilUserFromGetters(state) {
+
+            return state.profilUser
+        },
         //Roles_user
         getRolesUserFromGetters(state) {
 
@@ -51,9 +77,12 @@ export default {
 
             return state.product
         },
-        
+
     },
     mutations: {
+        profilUser(state, data) {
+            return state.profilUser = data
+        },
         //Roles_user
         rolesUser(state, data) {
             return state.rolesUser = data
@@ -62,7 +91,7 @@ export default {
         roles(state, data) {
             return state.roles = data
         },
-         //User
+        //User
         auth(state, data) {
             return state.rolesAuth = data
         },
@@ -88,9 +117,13 @@ export default {
     },
 
     actions: {
+        async allProfilFromDatabase(context) {
+            let data = (await axios.get("getProfil")).data;
+            context.commit("profilUser", data.user)
+        },
         //User Roles Roles_user
         async allEditFromDatabase(context) {
-            let data = (await axios.get("/admin/getUsers/"+window.location.href.substr(34))).data;
+            let data = (await axios.get("/admin/getUsers/" + window.location.href.substr(34))).data;
             context.commit("user", data.user)
             context.commit("roles", data.roles)
             context.commit("rolesUser", data.rolesUser)
@@ -104,20 +137,19 @@ export default {
         },
         //Carts
         async allCartFromDatabase(context) {
-            let data = (await axios.get("getCarts")).data;
+            let data = (await axios.get("/getCarts")).data;
             context.commit("carts", data.carts)
         },
         //Products
         async allProductsFromDatabase(context) {
             let data = (await axios.get('getProducts')).data;
-            context.commit('products', data)
-            context.commit('carts', data.carts)
+            context.commit('products', data.products)
         },
         //Product
         async allProductFromDatabase(context) {
-            let data = (await axios.get('/getProduct/'+window.location.href.substr(30))).data;
+            let currentUrl = window.location.pathname;
+            let data = (await axios.get('/getProduct/' + currentUrl.substr(9))).data;
             context.commit('product', data.product)
-            context.commit('carts', data.carts)
         },
     },
 

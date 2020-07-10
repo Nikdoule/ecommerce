@@ -62,7 +62,7 @@
         </div>
       </div>
       <div class="row mb-2">
-        <div class="col-md-6" v-for="product in getAllProducts.products" :key="product.id">
+        <div class="col-md-6" v-for="product in products" :key="product.id">
           <div
             class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative"
           >
@@ -72,10 +72,7 @@
               <h5 class="mb-0">{{ product.title }}</h5>
               <div class="mb-1 text-muted">{{ product.subtitle }}</div>
               <p class="card-text mb-auto">{{ product.price / 100 }} €</p>
-              <a
-                :href="'product/'+product.slug"
-                class="stretched-link btn btn-info"
-              >En savoir plus</a>
+              <a :href="'product/'+product.slug" class="stretched-link btn btn-info">En savoir plus</a>
             </div>
           </div>
         </div>
@@ -85,36 +82,27 @@
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   data() {
     return {
-      slug: '',
-      tableau:[],
+      slug: "",
+      tableau: []
     };
   },
   created() {
     this.$store.dispatch("allProductsFromDatabase");
   },
-  
+  computed: mapState(["products"]),
   methods: {
     // getSlug (value) {
     //   this.$store.dispatch('pushSlug', value)
     // }
   },
   
-  computed: {
-    getAllProducts() {
-      return this.$store.getters.getProductsFromGetters
-    },
-    getCarts() {
-      return this.$store.getters.getCartFromGetters;
-    },
-    // getAllSlug() {
-    //   return this.$store.getters.getSlugFromGetters
-    // }
-    
-   
-  }
+  // getAllSlug() {
+  //   return this.$store.getters.getSlugFromGetters
+  // }
 };
 </script>
 

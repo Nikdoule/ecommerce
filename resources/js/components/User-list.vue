@@ -6,12 +6,16 @@
           <div class="card-header">Users list</div>
           <div class="card-body">
             <table class="table-user col-md-10">
-              <tbody v-for="(user,index) in getAllUsers" :key="user.id" class="d-flex justify-content-between">
+              <tbody
+                v-for="(user,index) in users"
+                :key="user.id"
+                class="d-flex justify-content-between"
+              >
                 <tr class="d-flex flex-column mb-5">
                   <td class="text-uppercase">
                     <img
                       v-show="showImg ? user.image !== null : hiddenImg"
-                      :src="'../storage/'+user.image"
+                      :src="user.image"
                       alt
                       class="user-img"
                     />
@@ -21,11 +25,9 @@
                     <em class="text-muted">{{ user.email }}</em>
                   </td>
                   <div class="d-flex">
-                    <td
-                      class="text-success d-inline"
-                      v-for="roles in user.roles"
-                      :key="roles.id"
-                    ><button class="btn btn-success">{{ roles.name }}</button></td>
+                    <td class="text-success d-inline" v-for="roles in user.roles" :key="roles.id">
+                      <button class="btn btn-success">{{ roles.name }}</button>
+                    </td>
                   </div>
                 </tr>
                 <td class="d-flex mt-4">
@@ -35,7 +37,11 @@
                   <form @submit.prevent="onDelete(user.id, index)" class="d-inline">
                     <button v-show="showButton" type="submit" class="button-delete">
                       {{activeCan}}
-                      <img class="svg" :src="'../images/delete.svg'" alt="bouton supprimer" />
+                      <img
+                        class="svg"
+                        :src="'../images/delete.svg'"
+                        alt="bouton supprimer"
+                      />
                     </button>
                   </form>
                 </td>
@@ -49,40 +55,34 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {
       showButton: false,
       showImg: true,
-      hiddenImg: false,
+      hiddenImg: false
     };
   },
   created() {
-    this.$store.dispatch("allUsersFromDatabase")
+    this.$store.dispatch("allUsersFromDatabase");
+  },
+  computed: {
+    ...mapState(["users", "rolesAuth"]),
+    activeCan() {
+      for (const property in this.rolesAuth) {
+        if (this.rolesAuth[property] == "super-admin") {
+          this.showButton = true;
+        }
+      }
+    }
+    
   },
   methods: {
     onDelete(userId, index) {
-      axios
-        .delete("getUsers/" + userId, userId)
-        .then(({ data }) => {
-          Vue.delete(this.getAllUsers, index);
-        });
-    }
-  },
-  computed:{
-    getAllUsers: function() {
-        return this.$store.getters.getUsersFromGetters;
-      },
-    getRoleAuth: function() {
-        return this.$store.getters.getAuthFromGetters;
-
-      },
-    activeCan() {
-      for (const property in this.getRoleAuth) {
-        if (this.getRoleAuth[property] == "super-admin") {
-          this.showButton = true
-        }
-      }
+      axios.delete("getUsers/" + userId, userId).then(({ data }) => {
+        Vue.delete(this.users, index);
+      });
     }
   }
 };

@@ -7,17 +7,17 @@
           class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative"
         >
           <div class="col p-4 d-flex flex-column position-static">
-            <img :src="getProduct.image" alt />
+            <img :src="product.image" alt />
             <strong class="d-inline-block mb-2 text-primary">World</strong>
-            <h5 class="mb-0">{{ getProduct.title }}</h5>
-            <div class="mb-1 text-muted">{{ getProduct.subtitle }}</div>
-            <div class="mb-1 text-muted">{{ getProduct.subtitle }}</div>
-            <p class="card-text mb-auto">{{ getProduct.price / 100 * form.product_qty }} €</p>
+            <h5 class="mb-0">{{ product.title }}</h5>
+            <div class="mb-1 text-muted">{{ product.subtitle }}</div>
+            <div class="mb-1 text-muted">{{ product.subtitle }}</div>
+            <p class="card-text mb-auto">{{ product.price / 100 * form.product_qty }} €</p>
             <form @submit.prevent="onSubmit">
               <div class="d-flex col-4 pl-0">
                 <button
                   v-show="addProductCart"
-                  @click="form.product_id = getProduct.id"
+                  @click="form.product_id = product.id"
                   type="submit"
                   class="btn btn-success col-10"
                 >Ajouter au panier {{ activeDuplicate }}</button>
@@ -50,6 +50,7 @@
   </div>
 </template>
 <script>
+import { mapState, mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -69,26 +70,16 @@ export default {
     this.$store.dispatch("allProductFromDatabase");
   },
   computed: {
-    getProduct() {
-      return this.$store.getters.getProductFromGetters;
-    },
-    getCarts() {
-      return this.$store.getters.getCartFromGetters;
-    },
-    countTotal() {
-      let cTotal = Object.values(this.getCarts).reduce(
-        (t, { qty }) => t + Number(qty),
-        0
-      );
+    ...mapState(["product", "carts"]),
 
-      return cTotal;
-    },
-    activeDuplicate() {
-      for (const property in this.getCarts) {
-        if (this.getCarts[property].id == this.getProduct.id) {
+    ...mapGetters(["getTotal"]),
+
+    activeDuplicate(state) {
+      for (const property in this.carts) {
+        if (this.carts[property].id == this.product.id) {
           this.duplicate = true;
           this.addProductCart = false;
-          this.form.product_qty = this.getCarts[property].qty;
+          this.form.product_qty = this.carts[property].qty;
         }
       }
     }
@@ -96,23 +87,19 @@ export default {
   methods: {
     onChange(event, rowId) {
       this.form.qty = event.target.value;
-      for (const property in this.getCarts) {
-        if (this.getCarts[property].id == this.getProduct.id) {
-          this.rowId = this.getCarts[property].rowId;
-          this.getCarts[property].qty = this.form.product_qty;
+      for (const property in this.carts) {
+        if (this.carts[property].id == this.product.id) {
+          this.rowId = this.carts[property].rowId;
+          this.carts[property].qty = this.form.product_qty;
         }
       }
-      axios
-        .patch("/cart/" + this.rowId, this.form)
-        .then(({ data }) => {});
+      axios.patch("/cart/" + this.rowId, this.form).then(({ data }) => {});
     },
     onSubmit() {
-      axios
-        .post("/cart/add", this.form)
-        .then(({ data }) => {
-          this.tab = data;
-          Vue.set(this.getCarts, "name", this.tab);
-        });
+      axios.post("/cart/add", this.form).then(({ data }) => {
+        this.tab = data;
+        Vue.set(this.carts, "name", this.tab);
+      });
     }
   }
 };

@@ -3,7 +3,7 @@
 @section('edit-profil-user')
 @include('includes.menu')
 <div class="container">
-    <div class="row justify-content-center">
+    {{-- <div class="row justify-content-center">
         <div class="col-md-8">
             @if (session('success'))
             <div class="alert alert-success">
@@ -162,6 +162,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
+    <profil-component></profil-component>
 </div>
 @endsection

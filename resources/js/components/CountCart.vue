@@ -1,14 +1,15 @@
 <template>
   <div>
     <div >
-      <a class="height-cart" v-if=" countTotal > 0" :href="hrefcart">
+      <a class="height-cart" v-if=" getTotal > 0" :href="hrefcart">
       </a>
       <img class="svg" src="/images/shopping-cart.svg" alt="cart" />
-      <span class="badge badge-pill badge-dark">{{ countTotal }}</span>
+      <span class="badge badge-pill badge-dark">{{ getTotal }}</span>
     </div>
   </div>
 </template>
 <script>
+import { mapState, mapGetters } from 'vuex'
 export default {
     data() {
         return {
@@ -17,22 +18,15 @@ export default {
         }
     },
     created() {
-      this.$store.dispatch("allProductFromDatabase")
+      this.$store.dispatch("allCartFromDatabase");
     },
-    computed: {
-      getAllCart: function() {
-        return this.$store.getters.getCartFromGetters;
-      },
+    computed: mapState({
+    getCarts: state => state.carts,
       
-      countTotal() {
-      let cTotal = Object.values(this.getAllCart).reduce(
-        (t, { qty }) => t + Number(qty),
-        0
-      );
-
-      return cTotal;
-    },
-  },
+    ...mapGetters([
+      'getTotal'
+    ])
+  }),
 
 };
 </script>
