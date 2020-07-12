@@ -13,21 +13,26 @@ class ProductsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function VIEW_INDEX()
     {
-        $carts = Cart::content();
-        $products = Product::inRandomOrder()->take(6)->get();
+        return view('products.index');
         
-        return['products' => $products];
+    }
+    public function VIEW_SHOW()
+    {
+        return view('products.show');
+        
     }
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function index()
     {
-        //
+        $products = Product::inRandomOrder()->take(6)->get();
+        
+        return response()->json(['products' => $products], 200);
     }
 
     /**

@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\Gate;
 
 class UsersController extends Controller
 {
+    public function VIEW_INDEX()
+    {
+       return view('admin.users.index');
+    }
+    public function VIEW_EDIT()
+    {
+       return view('admin.users.edit');
+    }
     /**
      * Display a listing of the resource.
      *

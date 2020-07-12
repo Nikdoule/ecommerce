@@ -14,9 +14,14 @@ class CartController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function VIEW_INDEX() {
+
+        $countCarts = Cart::count();
+
+        return $countCarts > 0 ? view('cart.index') : redirect()->route('products.index');
+    }
     public function index()
     {
-        
         $carts = Cart::content();
         $subTotal = Cart::subtotal();
         $subTotal = floatval($subTotal);

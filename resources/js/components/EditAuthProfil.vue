@@ -4,7 +4,9 @@
       <div class="row justify-content-center">
         <div class="col-md-8">
           <div class="card mt-5">
-            <div class="card-header">Edit {{ getProfil.name }}</div>
+            <div class="card-header">
+              <p>Edit {{ getProfil.name }} {{ getProfil.last_name }}</p>
+            </div>
             <div class="card-body">
               <form @submit.prevent="onSubmit">
                 <div class="form-group row">
@@ -163,7 +165,7 @@ export default {
     return {
       checked: true,
       picked: "",
-      
+      image:"",
       form: {
         id: "",
         adress: "",
@@ -183,11 +185,18 @@ export default {
   },
   computed: {
     getProfil: function() {
-      this.form = this.$store.state.profilUser;
+
+      this.form.id = this.$store.state.profilUser.id;
+      this.form.adress = this.$store.state.profilUser.adress;
+      this.form.city = this.$store.state.profilUser.city;
+      this.form.civility = this.$store.state.profilUser.civility;
+      this.form.email = this.$store.state.profilUser.email;
+      this.form.last_name = this.$store.state.profilUser.last_name;
+      this.form.name = this.$store.state.profilUser.name;
+      this.form.phone = this.$store.state.profilUser.phone;
+      this.form.zip_code = this.$store.state.profilUser.zip_code;
+
       return this.$store.getters.getProfilUserFromGetters;
-    },
-    getCarts() {
-      return this.$store.getters.getCartFromGetters;
     },
   },
   methods: {
@@ -201,6 +210,7 @@ export default {
       let vm = this;
       reader.onload = e => {
         vm.form.image = e.target.result;
+        this.$store.state.profilUser.image = e.target.result;
       };
       reader.readAsDataURL(file);
     },

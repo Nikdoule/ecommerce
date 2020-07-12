@@ -11,6 +11,11 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 
 class ProfilController extends Controller
 {
+
+    public function VIEW_EDIT()
+    {
+        return view('profil.users.edit');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -61,11 +66,9 @@ class ProfilController extends Controller
      */
     public function edit()
     {
-        $carts = Cart::content();
-        
         $user = Auth::user();
 
-        return ['user' => $user, 'carts' => $carts];
+        return ['user' => $user];
     }
 
     /**
@@ -93,8 +96,9 @@ class ProfilController extends Controller
             $image = $request->get('image');
             $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
             \Image::make($request->get('image'))->save(public_path('images/').$name);
+            $user->image = '/images/'.$name;
         }
-        $user->image = '/images/'.$name;
+        
         $user->save();
 
         return response()->json(['success' => 'You have successfully uploaded an image'], 200);

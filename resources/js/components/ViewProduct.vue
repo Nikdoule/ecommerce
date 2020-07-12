@@ -6,12 +6,13 @@
         <div
           class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative"
         >
-          <div class="col p-4 d-flex flex-column position-static">
+          <div class="col p-4 d-flex flex-column position-static" :duplicate="activeDuplicate">
             <img :src="product.image" alt />
             <strong class="d-inline-block mb-2 text-primary">World</strong>
             <h5 class="mb-0">{{ product.title }}</h5>
-            <div class="mb-1 text-muted">{{ product.subtitle }}</div>
-            <div class="mb-1 text-muted">{{ product.subtitle }}</div>
+            <div class="mb-1 text-muted">
+              <p>{{product.subtitle}}</p>
+            </div>
             <p class="card-text mb-auto">{{ product.price / 100 * form.product_qty }} €</p>
             <form @submit.prevent="onSubmit">
               <div class="d-flex col-4 pl-0">
@@ -20,7 +21,7 @@
                   @click="form.product_id = product.id"
                   type="submit"
                   class="btn btn-success col-10"
-                >Ajouter au panier {{ activeDuplicate }}</button>
+                >Ajouter au panier</button>
                 <select
                   @change.prevent="onChange($event)"
                   v-model="form.product_qty"
@@ -85,7 +86,7 @@ export default {
     }
   },
   methods: {
-    onChange(event, rowId) {
+    onChange(event) {
       this.form.qty = event.target.value;
       for (const property in this.carts) {
         if (this.carts[property].id == this.product.id) {
@@ -93,12 +94,14 @@ export default {
           this.carts[property].qty = this.form.product_qty;
         }
       }
-      axios.patch("/cart/" + this.rowId, this.form).then(({ data }) => {});
+      axios.patch("/cart/" + this.rowId, this.form)
+      .then(({ data }) => {
+        
+      });
     },
     onSubmit() {
       axios.post("/cart/add", this.form).then(({ data }) => {
-        this.tab = data;
-        Vue.set(this.carts, "name", this.tab);
+        Vue.set(this.carts, "rowId", data);
       });
     }
   }

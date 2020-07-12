@@ -9,26 +9,13 @@ export default {
         roles: {},
         rolesUser: [],
         profilUser: {},
-        todos: [{
-                id: 1,
-                text: '...',
-                done: true
-            },
-            {
-                id: 2,
-                text: '...',
-                done: false
-            }
-        ]
+        
     },
 
     getters: {
         getTotal: state => {
             let cTotal = Object.values(state.carts).reduce(
-                (t, {
-                    qty
-                }) => t + Number(qty),
-                0
+                (t, {qty}) => t + Number(qty),0
             );
 
             return cTotal;
@@ -122,12 +109,16 @@ export default {
             context.commit("profilUser", data.user)
         },
         //User Roles Roles_user
-        async allEditFromDatabase(context) {
-            let data = (await axios.get("/admin/getUsers/" + window.location.href.substr(34))).data;
-            context.commit("user", data.user)
-            context.commit("roles", data.roles)
-            context.commit("rolesUser", data.rolesUser)
-            context.commit("auth", data.auth)
+        async editFromDatabase({ commit }) {
+            let currentUrl = window.location.pathname;
+            await axios.get("/admin/getUsers/" + currentUrl.substr(13))
+            .then(({ data }) => {
+                commit("user", data.user)
+                commit("roles", data.roles)
+                commit("rolesUser", data.rolesUser)
+                commit("auth", data.auth)
+            })
+            
         },
         //Users
         async allUsersFromDatabase(context) {
@@ -142,14 +133,17 @@ export default {
         },
         //Products
         async allProductsFromDatabase(context) {
-            let data = (await axios.get('getProducts')).data;
+            let data = (await axios.get('/api/getProduct')).data;
             context.commit('products', data.products)
         },
         //Product
-        async allProductFromDatabase(context) {
+        async allProductFromDatabase({commit}) {
             let currentUrl = window.location.pathname;
-            let data = (await axios.get('/getProduct/' + currentUrl.substr(9))).data;
-            context.commit('product', data.product)
+            await axios.get('/api/getProduct/' + currentUrl.substr(9))
+            .then(({data}) => {
+                commit('product', data.product)
+            })
+            
         },
     },
 

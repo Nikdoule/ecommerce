@@ -2013,7 +2013,7 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
-    this.$store.dispatch("allEditFromDatabase");
+    this.$store.dispatch("editFromDatabase");
   },
   computed: {
     getUser: function getUser() {
@@ -2225,11 +2225,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       checked: true,
       picked: "",
+      image: "",
       form: {
         id: "",
         adress: "",
@@ -2249,11 +2252,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     getProfil: function getProfil() {
-      this.form = this.$store.state.profilUser;
+      this.form.id = this.$store.state.profilUser.id;
+      this.form.adress = this.$store.state.profilUser.adress;
+      this.form.city = this.$store.state.profilUser.city;
+      this.form.civility = this.$store.state.profilUser.civility;
+      this.form.email = this.$store.state.profilUser.email;
+      this.form.last_name = this.$store.state.profilUser.last_name;
+      this.form.name = this.$store.state.profilUser.name;
+      this.form.phone = this.$store.state.profilUser.phone;
+      this.form.zip_code = this.$store.state.profilUser.zip_code;
       return this.$store.getters.getProfilUserFromGetters;
-    },
-    getCarts: function getCarts() {
-      return this.$store.getters.getCartFromGetters;
     }
   },
   methods: {
@@ -2263,11 +2271,14 @@ __webpack_require__.r(__webpack_exports__);
       this.createImage(files[0]);
     },
     createImage: function createImage(file) {
+      var _this = this;
+
       var reader = new FileReader();
       var vm = this;
 
       reader.onload = function (e) {
         vm.form.image = e.target.result;
+        _this.$store.state.profilUser.image = e.target.result;
       };
 
       reader.readAsDataURL(file);
@@ -2698,6 +2709,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2729,7 +2741,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   }),
   methods: {
-    onChange: function onChange(event, rowId) {
+    onChange: function onChange(event) {
       this.form.qty = event.target.value;
 
       for (var property in this.carts) {
@@ -2748,8 +2760,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       axios.post("/cart/add", this.form).then(function (_ref2) {
         var data = _ref2.data;
-        _this.tab = data;
-        Vue.set(_this.carts, "name", _this.tab);
+        Vue.set(_this.carts, "rowId", data);
       });
     }
   }
@@ -40149,7 +40160,14 @@ var render = function() {
         _c("div", { staticClass: "col-md-8" }, [
           _c("div", { staticClass: "card mt-5" }, [
             _c("div", { staticClass: "card-header" }, [
-              _vm._v("Edit " + _vm._s(_vm.getProfil.name))
+              _c("p", [
+                _vm._v(
+                  "Edit " +
+                    _vm._s(_vm.getProfil.name) +
+                    " " +
+                    _vm._s(_vm.getProfil.last_name)
+                )
+              ])
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "card-body" }, [
@@ -41277,7 +41295,10 @@ var render = function() {
           [
             _c(
               "div",
-              { staticClass: "col p-4 d-flex flex-column position-static" },
+              {
+                staticClass: "col p-4 d-flex flex-column position-static",
+                attrs: { duplicate: _vm.activeDuplicate }
+              },
               [
                 _c("img", { attrs: { src: _vm.product.image, alt: "" } }),
                 _vm._v(" "),
@@ -41292,11 +41313,7 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "mb-1 text-muted" }, [
-                  _vm._v(_vm._s(_vm.product.subtitle))
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "mb-1 text-muted" }, [
-                  _vm._v(_vm._s(_vm.product.subtitle))
+                  _c("p", [_vm._v(_vm._s(_vm.product.subtitle))])
                 ]),
                 _vm._v(" "),
                 _c("p", { staticClass: "card-text mb-auto" }, [
@@ -41337,11 +41354,7 @@ var render = function() {
                             }
                           }
                         },
-                        [
-                          _vm._v(
-                            "Ajouter au panier " + _vm._s(_vm.activeDuplicate)
-                          )
-                        ]
+                        [_vm._v("Ajouter au panier")]
                       ),
                       _vm._v(" "),
                       _c(
@@ -55660,16 +55673,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     rolesAuth: {},
     roles: {},
     rolesUser: [],
-    profilUser: {},
-    todos: [{
-      id: 1,
-      text: '...',
-      done: true
-    }, {
-      id: 2,
-      text: '...',
-      done: false
-    }]
+    profilUser: {}
   },
   getters: {
     getTotal: function getTotal(state) {
@@ -55775,24 +55779,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     //User Roles Roles_user
-    allEditFromDatabase: function allEditFromDatabase(context) {
+    editFromDatabase: function editFromDatabase(_ref2) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
-        var data;
+        var commit, currentUrl;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.next = 2;
-                return axios.get("/admin/getUsers/" + window.location.href.substr(34));
+                commit = _ref2.commit;
+                currentUrl = window.location.pathname;
+                _context2.next = 4;
+                return axios.get("/admin/getUsers/" + currentUrl.substr(13)).then(function (_ref3) {
+                  var data = _ref3.data;
+                  commit("user", data.user);
+                  commit("roles", data.roles);
+                  commit("rolesUser", data.rolesUser);
+                  commit("auth", data.auth);
+                });
 
-              case 2:
-                data = _context2.sent.data;
-                context.commit("user", data.user);
-                context.commit("roles", data.roles);
-                context.commit("rolesUser", data.rolesUser);
-                context.commit("auth", data.auth);
-
-              case 7:
+              case 4:
               case "end":
                 return _context2.stop();
             }
@@ -55856,7 +55861,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context5.prev = _context5.next) {
               case 0:
                 _context5.next = 2;
-                return axios.get('getProducts');
+                return axios.get('/api/getProduct');
 
               case 2:
                 data = _context5.sent.data;
@@ -55871,22 +55876,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     //Product
-    allProductFromDatabase: function allProductFromDatabase(context) {
+    allProductFromDatabase: function allProductFromDatabase(_ref4) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6() {
-        var currentUrl, data;
+        var commit, currentUrl;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
+                commit = _ref4.commit;
                 currentUrl = window.location.pathname;
-                _context6.next = 3;
-                return axios.get('/getProduct/' + currentUrl.substr(9));
+                _context6.next = 4;
+                return axios.get('/api/getProduct/' + currentUrl.substr(9)).then(function (_ref5) {
+                  var data = _ref5.data;
+                  commit('product', data.product);
+                });
 
-              case 3:
-                data = _context6.sent.data;
-                context.commit('product', data.product);
-
-              case 5:
+              case 4:
               case "end":
                 return _context6.stop();
             }

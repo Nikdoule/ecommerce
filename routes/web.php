@@ -16,36 +16,40 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->middleware('verified')->group(function(){
     
-    //admin
+    //Controller admin
     Route::namespace('Admin')->prefix('admin')->name('admin.')->middleware('can:manage-users')->group(function() {
-
-        Route::resource('getUsers', 'UsersController');
-        Route::resource('users', 'PageUsersController');
+        Route::resource('/getUsers', 'UsersController');
+        //View Admin
+        Route::get('/users', 'UsersController@VIEW_INDEX')->name('users.index');
+        Route::get('/users/{users}/edit', 'UsersController@VIEW_EDIT')->name('users.edit');
+        
+       
     });
     
-    //user
+    //Controller profil user
     Route::namespace('Profil')->prefix('edit')->name('profil.edit')->group(function() {
-        Route::get('getProfil', 'ProfilController@edit');
-        Route::patch('/users/{user}', 'ProfilController@update');
+
+        Route::get('/getProfil', 'ProfilController@edit');
+        Route::patch('/users/{user}', 'ProfilController@update')->name('.update');
         
     });
+    // View profil
     Route::namespace('Profil')->prefix('edit')->name('edit.users')->group(function() {
-        Route::get('users', 'PageProfilController@edit');
+
+        Route::get('/users', 'ProfilController@VIEW_EDIT');
         
     });
 
-    //product
-   
-    Route::get('/', 'Products\PageProductsController@index')->name('products.index');
+    //View products
+    Route::get('/', 'Products\ProductsController@VIEW_INDEX')->name('products.index');
 
-    Route::get('/getProducts', 'Products\ProductsController@index');
-    
-    Route::resource('/getProduct', 'Products\ProductsController');
+    Route::get('/product/{slug}', 'Products\ProductsController@VIEW_SHOW');
 
-    Route::resource('/product', 'Products\PageProductController');
-    //cart
-    Route::get('/cart', 'PageCartsController@index')->name('carts.index');
+    //view cart
+    Route::get('/cart', 'CartController@VIEW_INDEX')->name('carts.index');
     
+    //Controller carts
+
     Route::get('/getCarts', 'CartController@index');
 
     Route::post('/cart/add', 'CartController@store')->name('cart.store');
@@ -55,7 +59,8 @@ Route::middleware('auth')->middleware('verified')->group(function(){
     Route::delete('/cart/{rowId}', 'CartController@destroy')->name('cart.destroy');
 
 
-    //payement
+    //Controller payement
+
     Route::get('/payment', 'CheckoutController@index')->name('checkout.index');
     
     Route::post('/payment', 'CheckoutController@store')->name('checkout.store');
