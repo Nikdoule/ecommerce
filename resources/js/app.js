@@ -12,6 +12,8 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 import storeData from "./store/index"
 
+
+
 const store = new Vuex.Store(
    storeData
 )
@@ -34,6 +36,7 @@ Vue.component('profil-component', require('./components/EditAuthProfil.vue').def
 Vue.component('category-component', require('./components/ProductPerCategory.vue').default);
 Vue.component('count-component', require('./components/CountCart.vue').default);
 Vue.component('image-component', require('./components/ImageProfil.vue').default);
+Vue.component('pagination', require('laravel-vue-pagination'));
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

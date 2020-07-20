@@ -39,7 +39,7 @@ class ProductsController extends Controller
     public function index()
     {
         
-        $products = Product::inRandomOrder()->with('categories')->take(6)->get();
+        $products = Product::with('categories')->paginate(6);
 
         $categories = Category::all();
 
@@ -105,10 +105,10 @@ class ProductsController extends Controller
     public function getCategory($slug) {
 
         $categories = Category::all();
-        
+
         $categoryWithSlug = Category::where('slug', $slug)->firstOrFail();
 
-        $productByCategories = $categoryWithSlug->products()->with('categories')->get();
+        $productByCategories = $categoryWithSlug->products()->with('categories')->paginate(6);
 
         return response()->json(['productByCategories' => $productByCategories, 'categories' => $categories], 200);
     }

@@ -51,13 +51,13 @@
         </div>
       </div>
       <div class="row mb-2">
-        <div class="col-md-6" v-for="product in productsCategories" :key="product.id">
+        <div class="col-md-6" v-for="(product, a) in productsCategories.data" :key="a">
           <div
             class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative"
           >
             <div class="col p-4 d-flex flex-column position-static">
               <img :src="product.image" alt />
-              <strong class="d-inline-block mb-2 text-primary" v-for="category in product.categories" :key="category.id">{{category.name}}</strong>
+              <strong class="d-inline-block mb-2 text-primary" v-for="(category,i) in product.categories" :key="i">{{category.name}}</strong>
               <h5 class="mb-0">{{ product.title }}</h5>
               <div class="mb-1 text-muted">{{ product.subtitle }}</div>
               <p class="card-text mb-auto">{{ product.price / 100 }} €</p>
@@ -67,16 +67,31 @@
         </div>
       </div>
     </div>
+    <pagination :data="productsCategories" @pagination-change-page="getResults" class="mt-5"></pagination>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 export default {
+  data() {
+    return {
+     
+    };
+  },
   created() {
     this.$store.dispatch("allCategoryFromDatabase");
   },
   computed: mapState(["productsCategories", "categories"]),
+  methods: {
+     getResults(page = 1) {
+      let currentUrl = window.location.pathname;
+			axios.get('/getCategory/' + currentUrl.substr(10) + '?page=' + page)
+				.then(response => {
+					this.$store.state.productsCategories = response.data.productByCategories;
+				});
+		}
+  }
 };
 </script>
 

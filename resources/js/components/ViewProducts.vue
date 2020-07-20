@@ -51,13 +51,13 @@
         </div>
       </div>
       <div class="row mb-2">
-        <div class="col-md-6" v-for="product in products" :key="product.id">
+        <div class="col-md-6" v-for="(product, i) in products.data" :key="i">
           <div
             class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative"
           >
             <div class="col p-4 d-flex flex-column position-static">
               <img :src="product.image" alt />
-              <strong class="d-inline-block mb-2 text-primary" v-for="category in product.categories" :key="category.id">{{category.name}}</strong>
+              <strong class="d-inline-block mb-2 text-primary" v-for="(category, i) in product.categories" :key="i">{{category.name}}</strong>
               <h5 class="mb-0">{{ product.title }}</h5>
               <div class="mb-1 text-muted">{{ product.subtitle }}</div>
               <p class="card-text mb-auto">{{ product.price / 100 }} €</p>
@@ -65,8 +65,10 @@
             </div>
           </div>
         </div>
+        
       </div>
     </div>
+    <pagination :data="products" @pagination-change-page="getResults" class="mt-5"></pagination>
   </div>
 </template>
 
@@ -76,17 +78,25 @@ export default {
   data() {
     return {
       slug: "",
-      tableau: []
+      tableau: [],
+      products:{}
     };
   },
   created() {
     this.$store.dispatch("allProductsFromDatabase");
+    axios.get('/api/getProduct')
+				.then(response => {
+					this.products = response.data.products;
+				});
   },
-  computed: mapState(["products", 'categories']),
+  computed: mapState(['categories']),
   methods: {
-    // getSlug (value) {
-    //   this.$store.dispatch('pushSlug', value)
-    // }
+   getResults(page = 1) {
+			axios.get('/api/getProduct?page=' + page)
+				.then(response => {
+					this.products = response.data.products;
+				});
+		}
   },
   
   // getAllSlug() {
