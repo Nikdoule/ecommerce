@@ -13,8 +13,8 @@ class CategoriesTableSeeder extends Seeder
     public function run()
     {
         Category::create([
-            'name' => 'Hight Tech',
-            'slug' => 'hight-tech'
+            'name' => 'High Tech',
+            'slug' => 'high-tech'
         ]);
 
         Category::create([

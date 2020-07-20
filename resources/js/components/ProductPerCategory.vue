@@ -36,7 +36,7 @@
       </header>
       <div class="nav-scroller py-1 mb-2">
         <nav class="nav d-flex justify-content-between" >
-          <a v-for="category in categories" :key="category.id" class="p-2 text-muted" :href="'category/'+category.slug">{{ category.name }}</a>
+          <a v-for="category in categories" :key="category.id" class="p-2 text-muted" :href="'/category/'+category.slug">{{ category.name }}</a>
         </nav>
       </div>
       <div class="jumbotron p-4 p-md-5 text-white rounded bg-dark">
@@ -51,7 +51,7 @@
         </div>
       </div>
       <div class="row mb-2">
-        <div class="col-md-6" v-for="product in products" :key="product.id">
+        <div class="col-md-6" v-for="product in productsCategories" :key="product.id">
           <div
             class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative"
           >
@@ -61,7 +61,7 @@
               <h5 class="mb-0">{{ product.title }}</h5>
               <div class="mb-1 text-muted">{{ product.subtitle }}</div>
               <p class="card-text mb-auto">{{ product.price / 100 }} €</p>
-              <a :href="'product/'+product.slug" class="stretched-link btn btn-info">En savoir plus</a>
+              <a :href="'/product/'+product.slug" class="stretched-link btn btn-info">En savoir plus</a>
             </div>
           </div>
         </div>
@@ -71,43 +71,14 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapState } from "vuex";
 export default {
-  data() {
-    return {
-      slug: "",
-      tableau: []
-    };
-  },
   created() {
-    this.$store.dispatch("allProductsFromDatabase");
+    this.$store.dispatch("allCategoryFromDatabase");
   },
-  computed: mapState(["products", 'categories']),
-  methods: {
-    // getSlug (value) {
-    //   this.$store.dispatch('pushSlug', value)
-    // }
-  },
-  
-  // getAllSlug() {
-  //   return this.$store.getters.getSlugFromGetters
-  // }
+  computed: mapState(["productsCategories", "categories"]),
 };
 </script>
 
 <style lang="scss" scoped>
-.bd-placeholder-img {
-  font-size: 1.125rem;
-  text-anchor: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-@media (min-width: 768px) {
-  .bd-placeholder-img-lg {
-    font-size: 3.5rem;
-  }
-}
 </style>

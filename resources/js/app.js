@@ -31,7 +31,7 @@ Vue.component('products-component', require('./components/ViewProducts.vue').def
 Vue.component('product-component', require('./components/ViewProduct.vue').default);
 Vue.component('cart-component', require('./components/ViewCart.vue').default);
 Vue.component('profil-component', require('./components/EditAuthProfil.vue').default);
-
+Vue.component('category-component', require('./components/ProductPerCategory.vue').default);
 Vue.component('count-component', require('./components/CountCart.vue').default);
 Vue.component('image-component', require('./components/ImageProfil.vue').default);
 /**

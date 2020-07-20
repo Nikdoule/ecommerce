@@ -58,7 +58,6 @@ Route::middleware('auth')->middleware('verified')->group(function(){
 
     Route::delete('/cart/{rowId}', 'CartController@destroy')->name('cart.destroy');
 
-
     //Controller payement
 
     Route::get('/payment', 'CheckoutController@index')->name('checkout.index');
@@ -67,6 +66,9 @@ Route::middleware('auth')->middleware('verified')->group(function(){
 
     Route::get('/thankyou', 'CheckoutController@thankYou')->name('checkout.thankYou');
 
+    Route::get('/getCategory/{slug}' , 'Products\ProductsController@getCategory');
+
+    Route::get('/category/{slug}', 'Products\ProductsController@VIEW_CATEGORY');
     
 });
 

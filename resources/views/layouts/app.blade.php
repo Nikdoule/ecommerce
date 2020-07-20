@@ -37,6 +37,7 @@
             @yield('cart')
             @yield('checkout')
             @yield('thankyou')
+            @yield('category')
         </main>
     </div>
     @yield('extra-js')

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Products;
 use App\Product;
+use App\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Gloudemans\Shoppingcart\Facades\Cart;
@@ -23,6 +24,13 @@ class ProductsController extends Controller
         return view('products.show');
         
     }
+    public function VIEW_CATEGORY()
+
+    {
+        
+        return view('products.category');
+        
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -30,9 +38,12 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        $products = Product::inRandomOrder()->take(6)->get();
         
-        return response()->json(['products' => $products], 200);
+        $products = Product::inRandomOrder()->with('categories')->take(6)->get();
+
+        $categories = Category::all();
+
+        return response()->json(['products' => $products, 'categories' => $categories], 200);
     }
 
     /**
@@ -90,5 +101,15 @@ class ProductsController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function getCategory($slug) {
+
+        $categories = Category::all();
+        
+        $categoryWithSlug = Category::where('slug', $slug)->firstOrFail();
+
+        $productByCategories = $categoryWithSlug->products()->with('categories')->get();
+
+        return response()->json(['productByCategories' => $productByCategories, 'categories' => $categories], 200);
     }
 }
