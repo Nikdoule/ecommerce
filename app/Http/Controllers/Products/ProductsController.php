@@ -38,12 +38,20 @@ class ProductsController extends Controller
      */
     public function index()
     {
+        if(request('q') != null) {
+
+            $products['data'] = Product::where('title', 'like', '%' . request('q') . '%')->orWhere('description', 'like', '%' . request('q') . '%')->orWhere('subtitle', 'like', '%' . request('q') . '%')->inRandomOrder()->with('categories')->get();
+
+            return response()->json(['products' => $products], 200);
+        }else {
+
+            $products = Product::with('categories')->inRandomOrder()->paginate(6);
+
+            $categories = Category::all();
+
+            return response()->json(['products' => $products, 'categories' => $categories], 200);
+        }
         
-        $products = Product::with('categories')->paginate(6);
-
-        $categories = Category::all();
-
-        return response()->json(['products' => $products, 'categories' => $categories], 200);
     }
 
     /**
@@ -104,12 +112,22 @@ class ProductsController extends Controller
     }
     public function getCategory($slug) {
 
-        $categories = Category::all();
+        if(request('q') != null) {
 
-        $categoryWithSlug = Category::where('slug', $slug)->firstOrFail();
+            $categoryWithSlug = Category::where('slug', $slug)->firstOrFail();
+            
+            $productByCategories['data'] = $categoryWithSlug->products()->with('categories')->where('title', 'like', '%' . request('q') . '%')->orWhere('description', 'like', '%' . request('q') . '%')->orWhere('subtitle', 'like', '%' . request('q') . '%')->inRandomOrder()->get();
 
-        $productByCategories = $categoryWithSlug->products()->with('categories')->paginate(6);
+            return response()->json(['productByCategories' => $productByCategories], 200);
+        }else {
+            $categories = Category::all();
 
-        return response()->json(['productByCategories' => $productByCategories, 'categories' => $categories], 200);
+            $categoryWithSlug = Category::where('slug', $slug)->firstOrFail();
+    
+            $productByCategories = $categoryWithSlug->products()->with('categories')->paginate(6);
+    
+            return response()->json(['productByCategories' => $productByCategories, 'categories' => $categories], 200);
+        }
+        
     }
 }

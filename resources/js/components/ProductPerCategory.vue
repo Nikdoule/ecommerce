@@ -3,13 +3,17 @@
     <div class="container">
       <header class="blog-header py-3">
         <div class="row flex-nowrap justify-content-between align-items-center">
-          <div class="col-4 pt-1">
-            <a class="text-muted" href="#">Subscribe</a>
-          </div>
-          <div class="col-4 text-center">
-            <a class="blog-header-logo text-dark" href="#">Large</a>
-          </div>
-          <div class="col-4 d-flex justify-content-end align-items-center">
+          <div class="form-row">
+            <div class="col-row">
+              <input
+                type="text"
+                class="form-control"
+                @keyup="searchProduct"
+                v-model="q"
+                placeholder="Rechercher un produit"
+              />
+            </div>
+
             <a class="text-muted" href="#" aria-label="Search">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -30,13 +34,17 @@
                 <path d="M21 21l-5.2-5.2" />
               </svg>
             </a>
-            <a class="btn btn-sm btn-outline-secondary" href="#">Sign up</a>
           </div>
         </div>
       </header>
       <div class="nav-scroller py-1 mb-2">
-        <nav class="nav d-flex justify-content-between" >
-          <a v-for="category in categories" :key="category.id" class="p-2 text-muted" :href="'/category/'+category.slug">{{ category.name }}</a>
+        <nav class="nav d-flex justify-content-between">
+          <a
+            v-for="category in categories"
+            :key="category.id"
+            class="p-2 text-muted"
+            :href="'/category/'+category.slug"
+          >{{ category.name }}</a>
         </nav>
       </div>
       <div class="jumbotron p-4 p-md-5 text-white rounded bg-dark">
@@ -57,7 +65,11 @@
           >
             <div class="col p-4 d-flex flex-column position-static">
               <img :src="product.image" alt />
-              <strong class="d-inline-block mb-2 text-primary" v-for="(category,i) in product.categories" :key="i">{{category.name}}</strong>
+              <strong
+                class="d-inline-block mb-2 text-primary"
+                v-for="(category,i) in product.categories"
+                :key="i"
+              >{{category.name}}</strong>
               <h5 class="mb-0">{{ product.title }}</h5>
               <div class="mb-1 text-muted">{{ product.subtitle }}</div>
               <p class="card-text mb-auto">{{ product.price / 100 }} €</p>
@@ -67,7 +79,11 @@
         </div>
       </div>
     </div>
-    <pagination :data="productsCategories" @pagination-change-page="getResults" class="mt-5"></pagination>
+    <pagination
+      :data="productsCategories"
+      @pagination-change-page="getResults"
+      class="mt-5 justify-content-center"
+    ></pagination>
   </div>
 </template>
 
@@ -76,7 +92,7 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
-     
+      q: null
     };
   },
   created() {
@@ -84,13 +100,22 @@ export default {
   },
   computed: mapState(["productsCategories", "categories"]),
   methods: {
-     getResults(page = 1) {
+    getResults(page = 1) {
       let currentUrl = window.location.pathname;
-			axios.get('/getCategory/' + currentUrl.substr(10) + '?page=' + page)
+      axios
+        .get("/getCategory/" + currentUrl.substr(10) + "?page=" + page)
+        .then(response => {
+          this.$store.state.productsCategories =
+            response.data.productByCategories;
+        });
+    },
+    searchProduct() {
+      let currentUrl = window.location.pathname;
+      axios.get("/getCategory/" + currentUrl.substr(10) + "?q=" + this.q)
 				.then(response => {
 					this.$store.state.productsCategories = response.data.productByCategories;
 				});
-		}
+    }
   }
 };
 </script>

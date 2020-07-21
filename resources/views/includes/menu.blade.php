@@ -26,7 +26,6 @@
                 @if (Auth::user()->image && !Request::is('edit/users'))
                 <img src="{{asset(Auth::user()->image)}}" alt="client-avatar" class="user-img">
                 @endif
-                
                 <image-component></image-component>
                 <li class="nav-item dropdown">
                     <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"

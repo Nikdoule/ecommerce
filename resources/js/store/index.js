@@ -156,7 +156,7 @@ export default {
         //Product
         async allProductFromDatabase({commit}) {
             let currentUrl = window.location.pathname;
-            await axios.get('/api/getProduct/' + currentUrl.substr(9))
+            await axios.get('/api/getProduct/add/' + currentUrl.substr(9))
             .then(({data}) => {
                 commit('product', data.product)
             })

@@ -2403,10 +2403,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return {};
+    return {
+      q: null
+    };
   },
   created: function created() {
     this.$store.dispatch("allCategoryFromDatabase");
@@ -2418,8 +2436,16 @@ __webpack_require__.r(__webpack_exports__);
 
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       var currentUrl = window.location.pathname;
-      axios.get('/getCategory/' + currentUrl.substr(10) + '?page=' + page).then(function (response) {
+      axios.get("/getCategory/" + currentUrl.substr(10) + "?page=" + page).then(function (response) {
         _this.$store.state.productsCategories = response.data.productByCategories;
+      });
+    },
+    searchProduct: function searchProduct() {
+      var _this2 = this;
+
+      var currentUrl = window.location.pathname;
+      axios.get("/getCategory/" + currentUrl.substr(10) + "?q=" + this.q).then(function (response) {
+        _this2.$store.state.productsCategories = response.data.productByCategories;
       });
     }
   }
@@ -2817,6 +2843,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2957,15 +2986,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       slug: "",
       tableau: [],
-      products: {}
+      products: {},
+      q: ''
     };
   },
   created: function created() {
@@ -2984,6 +3012,13 @@ __webpack_require__.r(__webpack_exports__);
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       axios.get('/api/getProduct?page=' + page).then(function (response) {
         _this2.products = response.data.products;
+      });
+    },
+    searchProduct: function searchProduct() {
+      var _this3 = this;
+
+      axios.get('/api/getProduct?q=' + this.q).then(function (response) {
+        _this3.products = response.data.products;
       });
     }
   } // getAllSlug() {
@@ -41391,65 +41426,73 @@ var render = function() {
                 "row flex-nowrap justify-content-between align-items-center"
             },
             [
-              _vm._m(0),
-              _vm._v(" "),
-              _vm._m(1),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass:
-                    "col-4 d-flex justify-content-end align-items-center"
-                },
-                [
-                  _c(
-                    "a",
-                    {
-                      staticClass: "text-muted",
-                      attrs: { href: "#", "aria-label": "Search" }
+              _c("div", { staticClass: "form-row" }, [
+                _c("div", { staticClass: "col-row" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.q,
+                        expression: "q"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      placeholder: "Rechercher un produit"
                     },
-                    [
-                      _c(
-                        "svg",
-                        {
-                          staticClass: "mx-3",
-                          attrs: {
-                            xmlns: "http://www.w3.org/2000/svg",
-                            width: "20",
-                            height: "20",
-                            fill: "none",
-                            stroke: "currentColor",
-                            "stroke-linecap": "round",
-                            "stroke-linejoin": "round",
-                            "stroke-width": "2",
-                            role: "img",
-                            viewBox: "0 0 24 24",
-                            focusable: "false"
-                          }
-                        },
-                        [
-                          _c("title", [_vm._v("Search")]),
-                          _vm._v(" "),
-                          _c("circle", {
-                            attrs: { cx: "10.5", cy: "10.5", r: "7.5" }
-                          }),
-                          _vm._v(" "),
-                          _c("path", { attrs: { d: "M21 21l-5.2-5.2" } })
-                        ]
-                      )
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    {
-                      staticClass: "btn btn-sm btn-outline-secondary",
-                      attrs: { href: "#" }
-                    },
-                    [_vm._v("Sign up")]
-                  )
-                ]
-              )
+                    domProps: { value: _vm.q },
+                    on: {
+                      keyup: _vm.searchProduct,
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.q = $event.target.value
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c(
+                  "a",
+                  {
+                    staticClass: "text-muted",
+                    attrs: { href: "#", "aria-label": "Search" }
+                  },
+                  [
+                    _c(
+                      "svg",
+                      {
+                        staticClass: "mx-3",
+                        attrs: {
+                          xmlns: "http://www.w3.org/2000/svg",
+                          width: "20",
+                          height: "20",
+                          fill: "none",
+                          stroke: "currentColor",
+                          "stroke-linecap": "round",
+                          "stroke-linejoin": "round",
+                          "stroke-width": "2",
+                          role: "img",
+                          viewBox: "0 0 24 24",
+                          focusable: "false"
+                        }
+                      },
+                      [
+                        _c("title", [_vm._v("Search")]),
+                        _vm._v(" "),
+                        _c("circle", {
+                          attrs: { cx: "10.5", cy: "10.5", r: "7.5" }
+                        }),
+                        _vm._v(" "),
+                        _c("path", { attrs: { d: "M21 21l-5.2-5.2" } })
+                      ]
+                    )
+                  ]
+                )
+              ])
             ]
           )
         ]),
@@ -41473,7 +41516,7 @@ var render = function() {
           )
         ]),
         _vm._v(" "),
-        _vm._m(2),
+        _vm._m(0),
         _vm._v(" "),
         _c(
           "div",
@@ -41538,7 +41581,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("pagination", {
-        staticClass: "mt-5",
+        staticClass: "mt-5 justify-content-center",
         attrs: { data: _vm.productsCategories },
         on: { "pagination-change-page": _vm.getResults }
       })
@@ -41547,28 +41590,6 @@ var render = function() {
   )
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-4 pt-1" }, [
-      _c("a", { staticClass: "text-muted", attrs: { href: "#" } }, [
-        _vm._v("Subscribe")
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-4 text-center" }, [
-      _c(
-        "a",
-        { staticClass: "blog-header-logo text-dark", attrs: { href: "#" } },
-        [_vm._v("Large")]
-      )
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -42264,6 +42285,8 @@ var render = function() {
                   _c("p", [_vm._v(_vm._s(_vm.product.subtitle))])
                 ]),
                 _vm._v(" "),
+                _c("div", [_c("p", [_vm._v(_vm._s(_vm.product.description))])]),
+                _vm._v(" "),
                 _c("p", { staticClass: "card-text mb-auto" }, [
                   _vm._v(
                     _vm._s((_vm.product.price / 100) * _vm.form.product_qty) +
@@ -42416,65 +42439,73 @@ var render = function() {
                 "row flex-nowrap justify-content-between align-items-center"
             },
             [
-              _vm._m(0),
-              _vm._v(" "),
-              _vm._m(1),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass:
-                    "col-4 d-flex justify-content-end align-items-center"
-                },
-                [
-                  _c(
-                    "a",
-                    {
-                      staticClass: "text-muted",
-                      attrs: { href: "#", "aria-label": "Search" }
+              _c("div", { staticClass: "form-row" }, [
+                _c("div", { staticClass: "col-row" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.q,
+                        expression: "q"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      placeholder: "Rechercher un produit"
                     },
-                    [
-                      _c(
-                        "svg",
-                        {
-                          staticClass: "mx-3",
-                          attrs: {
-                            xmlns: "http://www.w3.org/2000/svg",
-                            width: "20",
-                            height: "20",
-                            fill: "none",
-                            stroke: "currentColor",
-                            "stroke-linecap": "round",
-                            "stroke-linejoin": "round",
-                            "stroke-width": "2",
-                            role: "img",
-                            viewBox: "0 0 24 24",
-                            focusable: "false"
-                          }
-                        },
-                        [
-                          _c("title", [_vm._v("Search")]),
-                          _vm._v(" "),
-                          _c("circle", {
-                            attrs: { cx: "10.5", cy: "10.5", r: "7.5" }
-                          }),
-                          _vm._v(" "),
-                          _c("path", { attrs: { d: "M21 21l-5.2-5.2" } })
-                        ]
-                      )
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    {
-                      staticClass: "btn btn-sm btn-outline-secondary",
-                      attrs: { href: "#" }
-                    },
-                    [_vm._v("Sign up")]
-                  )
-                ]
-              )
+                    domProps: { value: _vm.q },
+                    on: {
+                      keyup: _vm.searchProduct,
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.q = $event.target.value
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c(
+                  "a",
+                  {
+                    staticClass: "text-muted",
+                    attrs: { href: "#", "aria-label": "Search" }
+                  },
+                  [
+                    _c(
+                      "svg",
+                      {
+                        staticClass: "mx-3",
+                        attrs: {
+                          xmlns: "http://www.w3.org/2000/svg",
+                          width: "20",
+                          height: "20",
+                          fill: "none",
+                          stroke: "currentColor",
+                          "stroke-linecap": "round",
+                          "stroke-linejoin": "round",
+                          "stroke-width": "2",
+                          role: "img",
+                          viewBox: "0 0 24 24",
+                          focusable: "false"
+                        }
+                      },
+                      [
+                        _c("title", [_vm._v("Search")]),
+                        _vm._v(" "),
+                        _c("circle", {
+                          attrs: { cx: "10.5", cy: "10.5", r: "7.5" }
+                        }),
+                        _vm._v(" "),
+                        _c("path", { attrs: { d: "M21 21l-5.2-5.2" } })
+                      ]
+                    )
+                  ]
+                )
+              ])
             ]
           )
         ]),
@@ -42498,7 +42529,7 @@ var render = function() {
           )
         ]),
         _vm._v(" "),
-        _vm._m(2),
+        _vm._m(0),
         _vm._v(" "),
         _c(
           "div",
@@ -42563,7 +42594,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("pagination", {
-        staticClass: "mt-5",
+        staticClass: "mt-5 justify-content-center",
         attrs: { data: _vm.products },
         on: { "pagination-change-page": _vm.getResults }
       })
@@ -42572,28 +42603,6 @@ var render = function() {
   )
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-4 pt-1" }, [
-      _c("a", { staticClass: "text-muted", attrs: { href: "#" } }, [
-        _vm._v("Subscribe")
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-4 text-center" }, [
-      _c(
-        "a",
-        { staticClass: "blog-header-logo text-dark", attrs: { href: "#" } },
-        [_vm._v("Large")]
-      )
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -56899,7 +56908,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 commit = _ref4.commit;
                 currentUrl = window.location.pathname;
                 _context6.next = 4;
-                return axios.get('/api/getProduct/' + currentUrl.substr(9)).then(function (_ref5) {
+                return axios.get('/api/getProduct/add/' + currentUrl.substr(9)).then(function (_ref5) {
                   var data = _ref5.data;
                   commit('product', data.product);
                 });

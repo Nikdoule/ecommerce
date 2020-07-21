@@ -11,7 +11,10 @@
             <strong class="d-inline-block mb-2 text-primary">World</strong>
             <h5 class="mb-0">{{ product.title }}</h5>
             <div class="mb-1 text-muted">
-              <p>{{product.subtitle}}</p>
+              <p>{{ product.subtitle }}</p>
+            </div>
+            <div>
+              <p>{{ product.description }}</p>
             </div>
             <p class="card-text mb-auto">{{ product.price / 100 * form.product_qty }} €</p>
             <form @submit.prevent="onSubmit">

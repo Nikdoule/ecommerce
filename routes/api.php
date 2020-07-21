@@ -20,5 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 
-Route::resource('/getProduct', 'Products\ProductsController');
-
+Route::get('/getProduct/add/{slug}', 'Products\ProductsController@show');
+Route::get('/getProduct', 'Products\ProductsController@index');
