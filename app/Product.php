@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
 
-    protected $fillable = ['category_id', 'file_id', 'title', 'slug','subtitle','description','price','image', 'images'];
+    protected $fillable = ['category_id','title', 'slug','subtitle','description','price','image', 'images'];
 
     public function categories()
     {
@@ -20,8 +20,5 @@ class Product extends Model
 
         return number_format($price, 2, ',', ' ') . '€';
     }
-    public function files()
-    {
-        return $this->hasMany('App\Product');
-    }
+    
 }

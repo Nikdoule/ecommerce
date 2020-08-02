@@ -22,7 +22,6 @@ class CreateProductsTable extends Migration
             $table->integer('price');
             $table->string('image');
             $table->string('images');
-            $table->integer('file_id')->unsigned()->nullable();
             $table->timestamps();
 
         });

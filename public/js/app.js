@@ -1948,11 +1948,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   created: function created() {
     this.$store.dispatch("allCartFromDatabase");
   },
-  computed: Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(_objectSpread({
-    getCarts: function getCarts(state) {
-      return state.carts;
-    }
-  }, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['getTotal'])))
+  computed: Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['getTotal'])))
 });
 
 /***/ }),
@@ -2688,7 +2684,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2708,6 +2703,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           this.showButton = true;
         }
       }
+
+      return this.showButton;
     }
   }),
   methods: {
@@ -3021,12 +3018,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      serialize: [],
+      unSerialize: [],
       addProductCart: true,
       duplicate: false,
       counts: 5,
@@ -3043,14 +3039,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.$store.dispatch("allProductFromDatabase");
   },
   computed: _objectSpread({
-    pair: function pair() {
+    formatSerialize: function formatSerialize() {
       for (var property in this.product) {
-        this.serialize = this.product.images.split('"');
+        this.unSerialize = this.product.images.split('"');
       }
 
-      for (var i = 0; i < this.serialize.length; i++) {
-        this.serialize.splice(i, 1);
+      for (var i = 0; i < this.unSerialize.length; i++) {
+        this.unSerialize.splice(i, 1);
       }
+
+      return this.unSerialize;
     }
   }, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(["product", "carts"]), {}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(["getTotal"]), {
     activeDuplicate: function activeDuplicate(state) {
@@ -42355,19 +42353,14 @@ var render = function() {
                                 {
                                   name: "show",
                                   rawName: "v-show",
-                                  value: _vm.showButton,
-                                  expression: "showButton"
+                                  value: _vm.activeCan,
+                                  expression: "activeCan"
                                 }
                               ],
                               staticClass: "button-delete",
                               attrs: { type: "submit" }
                             },
                             [
-                              _vm._v(
-                                "\n                    " +
-                                  _vm._s(_vm.activeCan) +
-                                  "\n                    "
-                              ),
                               _c("img", {
                                 staticClass: "svg",
                                 attrs: {
@@ -42878,19 +42871,14 @@ var render = function() {
                 _c(
                   "div",
                   { staticClass: "d-flex justify-content-between" },
-                  [
-                    _vm._v(
-                      "\n            " + _vm._s(_vm.pair) + "\n            "
-                    ),
-                    _vm._l(_vm.serialize, function(item) {
-                      return _c("img", {
-                        key: item.index,
-                        staticClass: "d-flex mt-3",
-                        attrs: { id: "pair", src: item, alt: "" }
-                      })
+                  _vm._l(_vm.formatSerialize, function(item) {
+                    return _c("img", {
+                      key: item.index,
+                      staticClass: "d-flex mt-3",
+                      attrs: { id: "pair", src: item, alt: "" }
                     })
-                  ],
-                  2
+                  }),
+                  0
                 ),
                 _vm._v(" "),
                 _c(

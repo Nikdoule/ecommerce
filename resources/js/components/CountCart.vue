@@ -21,7 +21,6 @@ export default {
       this.$store.dispatch("allCartFromDatabase");
     },
     computed: mapState({
-    getCarts: state => state.carts,
       
     ...mapGetters([
       'getTotal'

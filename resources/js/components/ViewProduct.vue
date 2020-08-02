@@ -10,10 +10,9 @@
             <img :src="product.image" alt />
             
             <div class="d-flex justify-content-between">
-              {{ pair }}
               <img
                 id="pair"
-                v-for="item in serialize"
+                v-for="item in formatSerialize"
                 :key="item.index"
                 :src="item"
                 class="d-flex mt-3"
@@ -70,7 +69,7 @@ import { mapState, mapGetters } from "vuex";
 export default {
   data() {
     return {
-      serialize: [],
+      unSerialize: [],
       addProductCart: true,
       duplicate: false,
       counts: 5,
@@ -87,13 +86,14 @@ export default {
     this.$store.dispatch("allProductFromDatabase");
   },
   computed: {
-    pair() {
+    formatSerialize() {
       for (const property in this.product) {
-        this.serialize = this.product.images.split('"');
+        this.unSerialize = this.product.images.split('"');
       }
-      for (var i = 0; i < this.serialize.length; i++) {
-        this.serialize.splice(i, 1);
+      for (var i = 0; i < this.unSerialize.length; i++) {
+        this.unSerialize.splice(i, 1);
       }
+      return this.unSerialize;
     },
     ...mapState(["product", "carts"]),
 

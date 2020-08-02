@@ -35,8 +35,7 @@
                     <img class="svg" :src="'../images/edit.svg'" alt="bouton editer" />
                   </a>
                   <form @submit.prevent="onDelete(user.id, index)" class="d-inline">
-                    <button v-show="showButton" type="submit" class="button-delete">
-                      {{activeCan}}
+                    <button v-show="activeCan" type="submit" class="button-delete">
                       <img
                         class="svg"
                         :src="'../images/delete.svg'"
@@ -75,6 +74,7 @@ export default {
           this.showButton = true;
         }
       }
+      return this.showButton
     }
     
   },
