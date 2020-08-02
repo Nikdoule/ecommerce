@@ -186,16 +186,8 @@ export default {
   computed: {
     getProfil: function() {
 
-      this.form.id = this.$store.state.profilUser.id;
-      this.form.adress = this.$store.state.profilUser.adress;
-      this.form.city = this.$store.state.profilUser.city;
-      this.form.civility = this.$store.state.profilUser.civility;
-      this.form.email = this.$store.state.profilUser.email;
-      this.form.last_name = this.$store.state.profilUser.last_name;
-      this.form.name = this.$store.state.profilUser.name;
-      this.form.phone = this.$store.state.profilUser.phone;
-      this.form.zip_code = this.$store.state.profilUser.zip_code;
-
+      this.form = this.$store.state.profilUser
+     
       return this.$store.getters.getProfilUserFromGetters;
     },
   },

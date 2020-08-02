@@ -10,8 +10,8 @@ export default {
         rolesUser: [],
         profilUser: {},
         categories: [],
-        productsCategories:{}
-        
+        productsCategories:{},
+        categoriesProduct:[]
     },
 
     getters: {
@@ -21,6 +21,10 @@ export default {
             );
 
             return cTotal;
+        },
+        getCategoriesProductFromGetters(state) {
+
+            return state.categoriesProduct
         },
         getProductsCategoriesFromGetters(state) {
 
@@ -77,6 +81,9 @@ export default {
 
     },
     mutations: {
+        categoriesProduct(state, data) {
+            return state.categoriesProduct = data
+        },
         productsCategories(state, data) {
             return state.productsCategories = data
         },
@@ -162,6 +169,17 @@ export default {
             })
             
         },
+        async editProductFromDatabase({commit}) {
+            let currentUrl = window.location.pathname;
+            await axios.get('/api/getProduct/' + currentUrl.substr(9))
+            .then(({data}) => {
+                commit('product', data[1])
+                commit('categories', data.categories)
+                commit('categoriesProduct', data.categoriesProduct)
+            })
+            
+        },
+        //Category
         async allCategoryFromDatabase({commit}) {
             let currentUrl = window.location.pathname;
             await axios.get('/getCategory/' + currentUrl.substr(10))

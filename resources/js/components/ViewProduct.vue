@@ -8,6 +8,18 @@
         >
           <div class="col p-4 d-flex flex-column position-static" :duplicate="activeDuplicate">
             <img :src="product.image" alt />
+            
+            <div class="d-flex justify-content-between">
+              {{ pair }}
+              <img
+                id="pair"
+                v-for="item in serialize"
+                :key="item.index"
+                :src="item"
+                class="d-flex mt-3"
+                alt
+              />
+            </div>
             <strong class="d-inline-block mb-2 text-primary">World</strong>
             <h5 class="mb-0">{{ product.title }}</h5>
             <div class="mb-1 text-muted">
@@ -58,6 +70,7 @@ import { mapState, mapGetters } from "vuex";
 export default {
   data() {
     return {
+      serialize: [],
       addProductCart: true,
       duplicate: false,
       counts: 5,
@@ -74,6 +87,14 @@ export default {
     this.$store.dispatch("allProductFromDatabase");
   },
   computed: {
+    pair() {
+      for (const property in this.product) {
+        this.serialize = this.product.images.split('"');
+      }
+      for (var i = 0; i < this.serialize.length; i++) {
+        this.serialize.splice(i, 1);
+      }
+    },
     ...mapState(["product", "carts"]),
 
     ...mapGetters(["getTotal"]),
@@ -97,10 +118,7 @@ export default {
           this.carts[property].qty = this.form.product_qty;
         }
       }
-      axios.patch("/cart/" + this.rowId, this.form)
-      .then(({ data }) => {
-        
-      });
+      axios.patch("/cart/" + this.rowId, this.form).then(({ data }) => {});
     },
     onSubmit() {
       axios.post("/cart/add", this.form).then(({ data }) => {

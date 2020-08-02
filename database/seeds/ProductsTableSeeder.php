@@ -12,6 +12,7 @@ class ProductsTableSeeder extends Seeder
      */
     public function run()
     {
+        $images = ['https://via.placeholder.com/200x250','https://via.placeholder.com/200x250','https://via.placeholder.com/200x250'];
         $faker = Faker\Factory::create();
         for ($i=0; $i < 30 ; $i++) { 
             Product::create([
@@ -20,11 +21,13 @@ class ProductsTableSeeder extends Seeder
                 'subtitle' => $faker->sentence(10),
                 'description' => $faker->text,
                 'price' => $faker->numberBetween(15, 300) * 100,
-                'image' => 'https://via.placeholder.com/200x250'
+                'image' => 'https://via.placeholder.com/200x250',
+                'images' => serialize($images)
             ])->categories()->attach([
                 rand(1, 5),
                 rand(1, 5)
             ]);
+           
         }
     }
 }

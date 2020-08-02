@@ -24,6 +24,12 @@ class ProductsController extends Controller
         return view('products.show');
         
     }
+    public function VIEW_EDIT()
+    {
+        
+        return view('products.edit');
+        
+    }
     public function VIEW_CATEGORY()
 
     {
@@ -46,7 +52,8 @@ class ProductsController extends Controller
         }else {
 
             $products = Product::with('categories')->inRandomOrder()->paginate(6);
-
+            $prods = Product::all();
+            
             $categories = Category::all();
 
             return response()->json(['products' => $products, 'categories' => $categories], 200);
@@ -83,9 +90,15 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($slug)
     {
-        //
+        $product = Product::where('slug', $slug)->firstOrFail();
+
+        $categories = Category::all();
+
+        $categoriesProduct = $product->categories->pluck("id");
+
+        return ['product', $product, 'categories' => $categories, 'categoriesProduct' => $categoriesProduct];
     }
 
     /**
@@ -95,9 +108,50 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $product)
     {
-        //
+        $product = Product::find($product);
+
+        $product->categories()->sync($request->categories);
+        $product->title = $request->title;
+        $product->subtitle = $request->subtitle;
+        $product->description = $request->description;
+        $product->price = $request->price;
+        $product->slug = $request->slug;
+        $product->image = $request->image;
+        $product->images = $request->images;
+
+        
+        if($request->image)
+        {
+            $image = $request->get('image');
+            $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
+            \Image::make($request->get('image'))->save(public_path('images/').$name);
+            $product->image = '/images/'.$name;
+        }
+        if($request->images)
+        {
+            $tab = [];
+            $i = 0;
+            $images = $request->get('images');
+            foreach($images as $item)
+            {
+                
+                $names = time().'.' . explode('/', explode(':', substr($item, 0, strpos($item, ';')))[1])[1];
+
+                \Image::make($item)->save(public_path('images/').$i.''.$names);
+                array_push($tab, '/images/'.$i.''.$names);
+                $i++;
+            }
+            
+            $product->images = serialize($tab);
+        }
+        
+
+
+        $product->save();
+        
+        return response()->json("add image and multipleImage succes");
     }
 
     /**

@@ -45,6 +45,8 @@ Route::middleware('auth')->middleware('verified')->group(function(){
 
     Route::get('/product/{slug}', 'Products\ProductsController@VIEW_SHOW');
 
+    Route::get('/product/{product}/edit', 'Products\ProductsController@VIEW_EDIT');
+
     //view cart
     Route::get('/cart', 'CartController@VIEW_INDEX')->name('carts.index');
     

@@ -5,11 +5,16 @@
         <div class="row flex-nowrap justify-content-between align-items-center">
           <div class="form-row">
             <div class="col-row">
-              <input type="text" class="form-control" @keyup="searchProduct" v-model="q" placeholder="Rechercher un produit">
+              <input
+                type="text"
+                class="form-control"
+                @keyup="searchProduct"
+                v-model="q"
+                placeholder="Rechercher un produit"
+              />
             </div>
-            
+
             <a class="text-muted" href="#" aria-label="Search">
-              
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -33,8 +38,13 @@
         </div>
       </header>
       <div class="nav-scroller py-1 mb-2">
-        <nav class="nav d-flex justify-content-between" >
-          <a v-for="category in categories" :key="category.id" class="p-2 text-muted" :href="'category/'+category.slug">{{ category.name }}</a>
+        <nav class="nav d-flex justify-content-between">
+          <a
+            v-for="category in categories"
+            :key="category.id"
+            class="p-2 text-muted"
+            :href="'category/'+category.slug"
+          >{{ category.name }}</a>
         </nav>
       </div>
       <div class="jumbotron p-4 p-md-5 text-white rounded bg-dark">
@@ -54,56 +64,66 @@
             class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative"
           >
             <div class="col p-4 d-flex flex-column position-static">
-              <img :src="product.image" alt />
-              <strong class="d-inline-block mb-2 text-primary" v-for="(category, i) in product.categories" :key="i">{{category.name}}</strong>
+              <a :href="'product/'+product.slug+'/edit'">edit</a>
+              <img :src="product.image" alt="" />
+              
+              <strong
+                class="d-inline-block mb-2 text-primary"
+                v-for="(category, i) in product.categories"
+                :key="i"
+              >{{category.name}}</strong>
               <h5 class="mb-0">{{ product.title }}</h5>
               <div class="mb-1 text-muted">{{ product.subtitle }}</div>
               <p class="card-text mb-auto">{{ product.price / 100 }} €</p>
-              <a :href="'product/'+product.slug" class="stretched-link btn btn-info">En savoir plus</a>
+              <a :href="'product/'+product.slug" class="btn btn-info">En savoir plus</a>
             </div>
           </div>
         </div>
-        
       </div>
     </div>
-    <pagination :data="products" @pagination-change-page="getResults" class="mt-5 justify-content-center"></pagination>
+    <pagination
+      :data="products"
+      @pagination-change-page="getResults"
+      class="mt-5 justify-content-center"
+    ></pagination>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapState } from "vuex";
 export default {
   data() {
     return {
       slug: "",
       tableau: [],
-      products:{},
-      q:''
+      products: {},
+      q: "",
     };
   },
+  mounted() {},
   created() {
     this.$store.dispatch("allProductsFromDatabase");
-    axios.get('/api/getProduct')
-				.then(response => {
-					this.products = response.data.products;
-				});
+    axios.get("/api/getProduct").then(response => {
+      this.products = response.data.products;
+    });
   },
-  computed: mapState(['categories']),
+  computed: {
+    ...mapState(["categories"])
+  },
+
   methods: {
-   getResults(page = 1) {
-			axios.get('/api/getProduct?page=' + page)
-				.then(response => {
-					this.products = response.data.products;
-				});
+    getResults(page = 1) {
+      axios.get("/api/getProduct?page=" + page).then(response => {
+        this.products = response.data.products;
+      });
     },
     searchProduct() {
-      axios.get('/api/getProduct?q=' + this.q)
-				.then(response => {
-					this.products = response.data.products;
-				});
+      axios.get("/api/getProduct?q=" + this.q).then(response => {
+        this.products = response.data.products;
+      });
     }
-  },
-  
+  }
+
   // getAllSlug() {
   //   return this.$store.getters.getSlugFromGetters
   // }
