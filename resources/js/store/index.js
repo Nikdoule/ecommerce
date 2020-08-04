@@ -156,22 +156,23 @@ export default {
         },
         //Products
         async allProductsFromDatabase(context) {
-            let data = (await axios.get('/api/getProduct')).data;
+            let data = (await axios.get('/getProduct')).data;
             context.commit('products', data.products)
             context.commit('categories', data.categories)
+            context.commit('auth', data.auth)
         },
         //Product
         async allProductFromDatabase({commit}) {
             let currentUrl = window.location.pathname;
-            await axios.get('/api/getProduct/add/' + currentUrl.substr(9))
+            await axios.get('/getProduct/add/' + currentUrl.substr(9))
             .then(({data}) => {
-                commit('product', data.product)
+                commit('product', data.product) 
             })
             
         },
         async editProductFromDatabase({commit}) {
             let currentUrl = window.location.pathname;
-            await axios.get('/api/getProduct/' + currentUrl.substr(9))
+            await axios.get('/getProduct/' + currentUrl.substr(9))
             .then(({data}) => {
                 commit('product', data[1])
                 commit('categories', data.categories)

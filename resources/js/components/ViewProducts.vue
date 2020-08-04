@@ -64,7 +64,7 @@
             class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative"
           >
             <div class="col p-4 d-flex flex-column position-static">
-              <a :href="'product/'+product.slug+'/edit'">edit</a>
+              <a v-show="activeCan" :href="'product/'+product.slug+'/edit'">edit</a>
               <img :src="product.image" alt="" />
               
               <strong
@@ -96,29 +96,39 @@ export default {
     return {
       slug: "",
       tableau: [],
-      products: {},
       q: "",
+      products:{}
     };
   },
   mounted() {},
   created() {
     this.$store.dispatch("allProductsFromDatabase");
-    axios.get("/api/getProduct").then(response => {
+    axios.get("/getProduct").then(response => {
       this.products = response.data.products;
     });
+    
   },
   computed: {
-    ...mapState(["categories"])
+    ...mapState(["categories", "rolesAuth"]),
+    activeCan() {
+      let showButton = false;
+      for (const property in this.rolesAuth) {
+        if (this.rolesAuth[property] == "super-admin" || this.rolesAuth[property] == "admin") {
+          this.showButton = true;
+        }
+      }
+      return this.showButton
+    }
   },
 
   methods: {
     getResults(page = 1) {
-      axios.get("/api/getProduct?page=" + page).then(response => {
+      axios.get("/getProduct?page=" + page).then(response => {
         this.products = response.data.products;
       });
     },
     searchProduct() {
-      axios.get("/api/getProduct?q=" + this.q).then(response => {
+      axios.get("/getProduct?q=" + this.q).then(response => {
         this.products = response.data.products;
       });
     }

@@ -3,6 +3,7 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-8">
+          <div v-show="changeOk" class="alert alert-success mt-3">Les modifications sont un succès!</div>
           <div class="card mt-3">
             <div class="card-header">{{ product.title }}</div>
             <div class="card-body">
@@ -33,11 +34,11 @@
                   />
                   <label :for="category.id" class="form-check-label ml-5">{{ category.name }}</label>
                 </div>
-                <div class="col-md-3" v-if="form.image">
-                  <img :src="form.image" class="img-responsive" height="50%" width="50%">
+                <div class="col-md-3" v-if="product.image">
+                  <img :src="product.image" class="img-responsive" height="50%" width="50%">
                 </div>
                 <div class="form-group row">
-                  <label :for="form.image" class="col-md-4 col-form-label text-md-right">Image</label>
+                  <label :for="product.image" class="col-md-4 col-form-label text-md-right">Image</label>
                   <div class="col-md-6">
                     <input
                       accept="image/*"
@@ -50,12 +51,14 @@
                     <label class="custom-file-label" for="image">Choose file</label>
                   </div>
                 </div>
-                <div class="col-md-3" v-if="form.multipleImage">
-
-                  <img v-for="image in form.multipleImage" :key="image.id" :src="image" class="img-responsive" height="50%" width="50%" />
+                <div class="col-md-3" v-if="Array.isArray(product.images)">
+                  <img v-for="image in product.images" :key="image.id" :src="image" class="img-responsive" height="50%" width="50%" />
+                </div>
+                <div class="col-md-3" v-else>
+                  <img v-for="image in formatSerialize" :key="image.id" :src="image" class="img-responsive" height="50%" width="50%" />
                 </div>
                 <div class="form-group row">
-                  <label :for="form.multipleImages" class="col-md-4 col-form-label text-md-right">Multiple Images</label>
+                  <label :for="product.images" class="col-md-4 col-form-label text-md-right">Multiple Images</label>
                   <div class="col-md-6">
                     <input
                     @change="uploadImage"
@@ -84,11 +87,11 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      changeOk: false,
+      unSerialize: [],
       checked: true,
       form: {
         categories: [],
-        image: '',
-        multipleImage:[]
 
       }
     };
@@ -97,53 +100,73 @@ export default {
     this.$store.dispatch("editProductFromDatabase");
   },
   computed: {
+    ...mapState(["product", "categories", "categoriesProduct"]),
+
+    formatSerialize() {
+      for (const property in this.product) {
+        this.unSerialize = this.product.images.split('"');
+      }
+      for (var i = 0; i < this.unSerialize.length; i++) {
+        this.unSerialize.splice(i, 1);
+      }
+      
+      return this.unSerialize;
+    },
     getChecked() {
       this.form.categories = this.$store.state.categoriesProduct;
       return this.$store.getters.getCategoriesProductFromGetters;
     },
-    ...mapState(["product", "categories", "categoriesProduct"])
+    
   },
   methods: {
     uploadImage(e) {
+
       let files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
       if (files.length > 1) {
+
         this.createImage(files);
+
       } else {
-        console.log("on est ici");
+
         this.createImage(files[0]);
       }
 
-      console.log(files.length);
     },
     createImage(file) {
-      console.log(file.length);
+
+      let multipleImage = [];
+
       if (file.length > 1) {
-        console.log("je suis dans le multi")
+        
         for (var i = 0; i < file.length; i++) {
-          console.log(file[i]);
+
           let reader = new FileReader();
           reader.readAsDataURL(file[i]);
           reader.onload = e => {
-            this.form.multipleImage.push(e.target.result);
+            
+            multipleImage.push(e.target.result);
           };
+          
+          this.product.images = multipleImage;
         }
       } else {
-        console.log("ca peut etre converti en chaine");
+
         let reader = new FileReader();
         reader.readAsDataURL(file);
+        
         reader.onload = e => {
-          this.form.image = e.target.result;
+          this.product.image = e.target.result;
         };
       }
     },
     onPatch() {
-      this.product.image = this.form.image;
-      this.product.images = this.form.multipleImage;
       this.product.categories = this.form.categories;
       axios
-        .patch("/api/getProduct/" + this.product.id, this.product)
-        .then(console.log("ok"));
+        .patch("/getProduct/" + this.product.id, this.product)
+        .then(
+          this.changeOk = true
+        );
     }
   }
 };

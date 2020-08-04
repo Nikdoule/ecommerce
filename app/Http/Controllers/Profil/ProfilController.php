@@ -88,20 +88,20 @@ class ProfilController extends Controller
         $user->adress = $request->adress;
         $user->zip_code = $request->zip_code;
         $user->city = $request->city;
-        $user->image = $request->image;
         $user->phone = $request->phone;
 
-        if($request->image)
+        
+        if(strlen($request->image) > 200)
         {
             $image = $request->get('image');
-            $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
+            $name = time().'.jpg';
             \Image::make($request->get('image'))->save(public_path('images/').$name);
             $user->image = '/images/'.$name;
         }
         
         $user->save();
 
-        return response()->json(['success' => 'You have successfully uploaded an image'], 200);
+        return response()->json('add image Image succes');
     }
 
     /**

@@ -58,7 +58,6 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
-      showButton: false,
       showImg: true,
       hiddenImg: false
     };
@@ -69,6 +68,7 @@ export default {
   computed: {
     ...mapState(["users", "rolesAuth"]),
     activeCan() {
+      let showButton = false
       for (const property in this.rolesAuth) {
         if (this.rolesAuth[property] == "super-admin") {
           this.showButton = true;

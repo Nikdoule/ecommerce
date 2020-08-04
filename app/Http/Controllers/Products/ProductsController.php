@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Http\Controllers\Products;
 use App\Product;
 use App\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Gloudemans\Shoppingcart\Facades\Cart;
 
 class ProductsController extends Controller
@@ -16,6 +16,7 @@ class ProductsController extends Controller
      */
     public function VIEW_INDEX()
     {
+
         return view('products.index');
         
     }
@@ -50,13 +51,16 @@ class ProductsController extends Controller
 
             return response()->json(['products' => $products], 200);
         }else {
+            
+            $auth = Auth::user();
+
+            $role_auth = $auth->roles->pluck('name');
 
             $products = Product::with('categories')->inRandomOrder()->paginate(6);
-            $prods = Product::all();
             
             $categories = Category::all();
 
-            return response()->json(['products' => $products, 'categories' => $categories], 200);
+            return ['products' => $products, 'categories' => $categories, 'auth' => $role_auth];
         }
         
     }
@@ -122,14 +126,14 @@ class ProductsController extends Controller
         $product->images = $request->images;
 
         
-        if($request->image)
+        if(strlen($request->image) > 200)
         {
             $image = $request->get('image');
-            $name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
+            $name = time().'.jpg';
             \Image::make($request->get('image'))->save(public_path('images/').$name);
             $product->image = '/images/'.$name;
         }
-        if($request->images)
+        if(is_array($request->images))
         {
             $tab = [];
             $i = 0;
@@ -137,10 +141,11 @@ class ProductsController extends Controller
             foreach($images as $item)
             {
                 
-                $names = time().'.' . explode('/', explode(':', substr($item, 0, strpos($item, ';')))[1])[1];
+                $names = time().'.jpg';
 
                 \Image::make($item)->save(public_path('images/').$i.''.$names);
                 array_push($tab, '/images/'.$i.''.$names);
+                
                 $i++;
             }
             

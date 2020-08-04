@@ -2062,6 +2062,13 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -2223,35 +2230,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      changeOk: false,
       checked: true,
       picked: "",
-      image: "",
-      form: {
-        id: "",
-        adress: "",
-        city: "",
-        civility: "",
-        email: "",
-        last_name: "",
-        name: "",
-        phone: "",
-        zip_code: "",
-        image: ""
-      }
+      image: ""
     };
   },
   created: function created() {
     this.$store.dispatch("allProfilFromDatabase");
   },
-  computed: {
-    getProfil: function getProfil() {
-      this.form = this.$store.state.profilUser;
-      return this.$store.getters.getProfilUserFromGetters;
-    }
-  },
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(["profilUser"])),
   methods: {
     uploadImage: function uploadImage(e) {
       var files = e.target.files || e.dataTransfer.files;
@@ -2265,18 +2258,13 @@ __webpack_require__.r(__webpack_exports__);
       var vm = this;
 
       reader.onload = function (e) {
-        vm.form.image = e.target.result;
-        _this.$store.state.profilUser.image = e.target.result;
+        _this.profilUser.image = e.target.result;
       };
 
       reader.readAsDataURL(file);
     },
     onSubmit: function onSubmit() {
-      axios.patch("/edit/users/" + this.form.id, this.form).then(function (result) {
-        console.log(result);
-      }, function (error) {
-        console.log(error);
-      });
+      axios.patch("/edit/users/" + this.profilUser.id, this.profilUser).then(this.changeOk = true);
     }
   }
 });
@@ -2380,27 +2368,41 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      changeOk: false,
+      unSerialize: [],
       checked: true,
       form: {
-        categories: [],
-        image: '',
-        multipleImage: []
+        categories: []
       }
     };
   },
   created: function created() {
     this.$store.dispatch("editProductFromDatabase");
   },
-  computed: _objectSpread({
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(["product", "categories", "categoriesProduct"]), {
+    formatSerialize: function formatSerialize() {
+      for (var property in this.product) {
+        this.unSerialize = this.product.images.split('"');
+      }
+
+      for (var i = 0; i < this.unSerialize.length; i++) {
+        this.unSerialize.splice(i, 1);
+      }
+
+      return this.unSerialize;
+    },
     getChecked: function getChecked() {
       this.form.categories = this.$store.state.categoriesProduct;
       return this.$store.getters.getCategoriesProductFromGetters;
     }
-  }, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(["product", "categories", "categoriesProduct"])),
+  }),
   methods: {
     uploadImage: function uploadImage(e) {
       var files = e.target.files || e.dataTransfer.files;
@@ -2409,46 +2411,38 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (files.length > 1) {
         this.createImage(files);
       } else {
-        console.log("on est ici");
         this.createImage(files[0]);
       }
-
-      console.log(files.length);
     },
     createImage: function createImage(file) {
       var _this = this;
 
-      console.log(file.length);
+      var multipleImage = [];
 
       if (file.length > 1) {
-        console.log("je suis dans le multi");
-
         for (var i = 0; i < file.length; i++) {
-          console.log(file[i]);
           var reader = new FileReader();
           reader.readAsDataURL(file[i]);
 
           reader.onload = function (e) {
-            _this.form.multipleImage.push(e.target.result);
+            multipleImage.push(e.target.result);
           };
+
+          this.product.images = multipleImage;
         }
       } else {
-        console.log("ca peut etre converti en chaine");
-
         var _reader = new FileReader();
 
         _reader.readAsDataURL(file);
 
         _reader.onload = function (e) {
-          _this.form.image = e.target.result;
+          _this.product.image = e.target.result;
         };
       }
     },
     onPatch: function onPatch() {
-      this.product.image = this.form.image;
-      this.product.images = this.form.multipleImage;
       this.product.categories = this.form.categories;
-      axios.patch("/api/getProduct/" + this.product.id, this.product).then(console.log("ok"));
+      axios.patch("/getProduct/" + this.product.id, this.product).then(this.changeOk = true);
     }
   }
 });
@@ -2688,7 +2682,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      showButton: false,
       showImg: true,
       hiddenImg: false
     };
@@ -2698,6 +2691,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(["users", "rolesAuth"]), {
     activeCan: function activeCan() {
+      var showButton = false;
+
       for (var property in this.rolesAuth) {
         if (this.rolesAuth[property] == "super-admin") {
           this.showButton = true;
@@ -3202,8 +3197,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     return {
       slug: "",
       tableau: [],
-      products: {},
-      q: ""
+      q: "",
+      products: {}
     };
   },
   mounted: function mounted() {},
@@ -3211,24 +3206,36 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _this = this;
 
     this.$store.dispatch("allProductsFromDatabase");
-    axios.get("/api/getProduct").then(function (response) {
+    axios.get("/getProduct").then(function (response) {
       _this.products = response.data.products;
     });
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(["categories"])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(["categories", "rolesAuth"]), {
+    activeCan: function activeCan() {
+      var showButton = false;
+
+      for (var property in this.rolesAuth) {
+        if (this.rolesAuth[property] == "super-admin" || this.rolesAuth[property] == "admin") {
+          this.showButton = true;
+        }
+      }
+
+      return this.showButton;
+    }
+  }),
   methods: {
     getResults: function getResults() {
       var _this2 = this;
 
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      axios.get("/api/getProduct?page=" + page).then(function (response) {
+      axios.get("/getProduct?page=" + page).then(function (response) {
         _this2.products = response.data.products;
       });
     },
     searchProduct: function searchProduct() {
       var _this3 = this;
 
-      axios.get("/api/getProduct?q=" + this.q).then(function (response) {
+      axios.get("/getProduct?q=" + this.q).then(function (response) {
         _this3.products = response.data.products;
       });
     }
@@ -41107,14 +41114,30 @@ var render = function() {
     _c("div", { staticClass: "container" }, [
       _c("div", { staticClass: "row justify-content-center" }, [
         _c("div", { staticClass: "col-md-8" }, [
+          _c(
+            "div",
+            {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: _vm.changeOk,
+                  expression: "changeOk"
+                }
+              ],
+              staticClass: "alert alert-success mt-3"
+            },
+            [_vm._v("Les modifications sont un succès!")]
+          ),
+          _vm._v(" "),
           _c("div", { staticClass: "card mt-5" }, [
             _c("div", { staticClass: "card-header" }, [
               _c("p", [
                 _vm._v(
                   "Edit " +
-                    _vm._s(_vm.getProfil.name) +
+                    _vm._s(_vm.profilUser.name) +
                     " " +
-                    _vm._s(_vm.getProfil.last_name)
+                    _vm._s(_vm.profilUser.last_name)
                 )
               ])
             ]),
@@ -41147,25 +41170,29 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form.email,
-                            expression: "form.email"
+                            value: _vm.profilUser.email,
+                            expression: "profilUser.email"
                           }
                         ],
                         staticClass: "form-control",
                         attrs: {
-                          id: _vm.getProfil.email,
+                          id: _vm.profilUser.email,
                           type: "email",
-                          name: _vm.getProfil.email,
+                          name: _vm.profilUser.email,
                           required: "",
                           autofocus: ""
                         },
-                        domProps: { value: _vm.form.email },
+                        domProps: { value: _vm.profilUser.email },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
                               return
                             }
-                            _vm.$set(_vm.form, "email", $event.target.value)
+                            _vm.$set(
+                              _vm.profilUser,
+                              "email",
+                              $event.target.value
+                            )
                           }
                         }
                       })
@@ -41188,25 +41215,29 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form.name,
-                            expression: "form.name"
+                            value: _vm.profilUser.name,
+                            expression: "profilUser.name"
                           }
                         ],
                         staticClass: "form-control",
                         attrs: {
-                          id: _vm.getProfil.name,
+                          id: _vm.profilUser.name,
                           type: "text",
-                          name: _vm.getProfil.name,
+                          name: _vm.profilUser.name,
                           required: "",
                           autofocus: ""
                         },
-                        domProps: { value: _vm.form.name },
+                        domProps: { value: _vm.profilUser.name },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
                               return
                             }
-                            _vm.$set(_vm.form, "name", $event.target.value)
+                            _vm.$set(
+                              _vm.profilUser,
+                              "name",
+                              $event.target.value
+                            )
                           }
                         }
                       })
@@ -41229,24 +41260,28 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form.last_name,
-                            expression: "form.last_name"
+                            value: _vm.profilUser.last_name,
+                            expression: "profilUser.last_name"
                           }
                         ],
                         staticClass: "form-control",
                         attrs: {
-                          id: _vm.getProfil.last_name,
+                          id: _vm.profilUser.last_name,
                           type: "text",
-                          name: _vm.getProfil.last_name,
+                          name: _vm.profilUser.last_name,
                           autofocus: ""
                         },
-                        domProps: { value: _vm.form.last_name },
+                        domProps: { value: _vm.profilUser.last_name },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
                               return
                             }
-                            _vm.$set(_vm.form, "last_name", $event.target.value)
+                            _vm.$set(
+                              _vm.profilUser,
+                              "last_name",
+                              $event.target.value
+                            )
                           }
                         }
                       })
@@ -41282,7 +41317,7 @@ var render = function() {
                         domProps: {
                           value: "m",
                           checked: _vm.checked
-                            ? _vm.getProfil.civility == "m"
+                            ? _vm.profilUser.civility == "m"
                             : "",
                           checked: _vm._q(_vm.picked, "m")
                         },
@@ -41307,8 +41342,8 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form.civility,
-                            expression: "form.civility"
+                            value: _vm.profilUser.civility,
+                            expression: "profilUser.civility"
                           }
                         ],
                         staticClass:
@@ -41321,13 +41356,13 @@ var render = function() {
                         domProps: {
                           value: "f",
                           checked: _vm.checked
-                            ? _vm.getProfil.civility == "f"
+                            ? _vm.profilUser.civility == "f"
                             : "",
-                          checked: _vm._q(_vm.form.civility, "f")
+                          checked: _vm._q(_vm.profilUser.civility, "f")
                         },
                         on: {
                           change: function($event) {
-                            return _vm.$set(_vm.form, "civility", "f")
+                            return _vm.$set(_vm.profilUser, "civility", "f")
                           }
                         }
                       }),
@@ -41359,25 +41394,29 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form.adress,
-                            expression: "form.adress"
+                            value: _vm.profilUser.adress,
+                            expression: "profilUser.adress"
                           }
                         ],
                         staticClass: "form-control",
                         attrs: {
-                          id: _vm.getProfil.adress,
+                          id: _vm.profilUser.adress,
                           type: "text",
-                          name: _vm.getProfil.adress,
+                          name: _vm.profilUser.adress,
                           required: "",
                           autofocus: ""
                         },
-                        domProps: { value: _vm.form.adress },
+                        domProps: { value: _vm.profilUser.adress },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
                               return
                             }
-                            _vm.$set(_vm.form, "adress", $event.target.value)
+                            _vm.$set(
+                              _vm.profilUser,
+                              "adress",
+                              $event.target.value
+                            )
                           }
                         }
                       })
@@ -41400,25 +41439,29 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form.zip_code,
-                            expression: "form.zip_code"
+                            value: _vm.profilUser.zip_code,
+                            expression: "profilUser.zip_code"
                           }
                         ],
                         staticClass: "form-control",
                         attrs: {
-                          id: _vm.getProfil.zip_code,
+                          id: _vm.profilUser.zip_code,
                           type: "text",
-                          name: _vm.getProfil.zip_code,
+                          name: _vm.profilUser.zip_code,
                           required: "",
                           autofocus: ""
                         },
-                        domProps: { value: _vm.form.zip_code },
+                        domProps: { value: _vm.profilUser.zip_code },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
                               return
                             }
-                            _vm.$set(_vm.form, "zip_code", $event.target.value)
+                            _vm.$set(
+                              _vm.profilUser,
+                              "zip_code",
+                              $event.target.value
+                            )
                           }
                         }
                       })
@@ -41441,25 +41484,29 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form.city,
-                            expression: "form.city"
+                            value: _vm.profilUser.city,
+                            expression: "profilUser.city"
                           }
                         ],
                         staticClass: "form-control",
                         attrs: {
-                          id: _vm.getProfil.city,
+                          id: _vm.profilUser.city,
                           type: "text",
-                          name: _vm.getProfil.city,
+                          name: _vm.profilUser.city,
                           required: "",
                           autofocus: ""
                         },
-                        domProps: { value: _vm.form.city },
+                        domProps: { value: _vm.profilUser.city },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
                               return
                             }
-                            _vm.$set(_vm.form, "city", $event.target.value)
+                            _vm.$set(
+                              _vm.profilUser,
+                              "city",
+                              $event.target.value
+                            )
                           }
                         }
                       })
@@ -41482,37 +41529,41 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form.phone,
-                            expression: "form.phone"
+                            value: _vm.profilUser.phone,
+                            expression: "profilUser.phone"
                           }
                         ],
                         staticClass: "form-control",
                         attrs: {
-                          id: _vm.getProfil.phone,
+                          id: _vm.profilUser.phone,
                           type: "text",
-                          name: _vm.getProfil.phone,
+                          name: _vm.profilUser.phone,
                           required: "",
                           autofocus: ""
                         },
-                        domProps: { value: _vm.form.phone },
+                        domProps: { value: _vm.profilUser.phone },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
                               return
                             }
-                            _vm.$set(_vm.form, "phone", $event.target.value)
+                            _vm.$set(
+                              _vm.profilUser,
+                              "phone",
+                              $event.target.value
+                            )
                           }
                         }
                       })
                     ])
                   ]),
                   _vm._v(" "),
-                  _vm.form.image
+                  _vm.profilUser.image
                     ? _c("div", { staticClass: "col-md-3" }, [
                         _c("img", {
                           staticClass: "img-responsive",
                           attrs: {
-                            src: _vm.form.image,
+                            src: _vm.profilUser.image,
                             height: "50%",
                             width: "50%"
                           }
@@ -41525,7 +41576,7 @@ var render = function() {
                       "label",
                       {
                         staticClass: "col-md-4 col-form-label text-md-right",
-                        attrs: { for: _vm.form.image }
+                        attrs: { for: _vm.profilUser.image }
                       },
                       [_vm._v("Image")]
                     ),
@@ -41596,6 +41647,22 @@ var render = function() {
     _c("div", { staticClass: "container" }, [
       _c("div", { staticClass: "row justify-content-center" }, [
         _c("div", { staticClass: "col-md-8" }, [
+          _c(
+            "div",
+            {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: _vm.changeOk,
+                  expression: "changeOk"
+                }
+              ],
+              staticClass: "alert alert-success mt-3"
+            },
+            [_vm._v("Les modifications sont un succès!")]
+          ),
+          _vm._v(" "),
           _c("div", { staticClass: "card mt-3" }, [
             _c("div", { staticClass: "card-header" }, [
               _vm._v(_vm._s(_vm.product.title))
@@ -41848,12 +41915,12 @@ var render = function() {
                     )
                   }),
                   _vm._v(" "),
-                  _vm.form.image
+                  _vm.product.image
                     ? _c("div", { staticClass: "col-md-3" }, [
                         _c("img", {
                           staticClass: "img-responsive",
                           attrs: {
-                            src: _vm.form.image,
+                            src: _vm.product.image,
                             height: "50%",
                             width: "50%"
                           }
@@ -41866,7 +41933,7 @@ var render = function() {
                       "label",
                       {
                         staticClass: "col-md-4 col-form-label text-md-right",
-                        attrs: { for: _vm.form.image }
+                        attrs: { for: _vm.product.image }
                       },
                       [_vm._v("Image")]
                     ),
@@ -41894,11 +41961,11 @@ var render = function() {
                     ])
                   ]),
                   _vm._v(" "),
-                  _vm.form.multipleImage
+                  Array.isArray(_vm.product.images)
                     ? _c(
                         "div",
                         { staticClass: "col-md-3" },
-                        _vm._l(_vm.form.multipleImage, function(image) {
+                        _vm._l(_vm.product.images, function(image) {
                           return _c("img", {
                             key: image.id,
                             staticClass: "img-responsive",
@@ -41907,14 +41974,25 @@ var render = function() {
                         }),
                         0
                       )
-                    : _vm._e(),
+                    : _c(
+                        "div",
+                        { staticClass: "col-md-3" },
+                        _vm._l(_vm.formatSerialize, function(image) {
+                          return _c("img", {
+                            key: image.id,
+                            staticClass: "img-responsive",
+                            attrs: { src: image, height: "50%", width: "50%" }
+                          })
+                        }),
+                        0
+                      ),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-group row" }, [
                     _c(
                       "label",
                       {
                         staticClass: "col-md-4 col-form-label text-md-right",
-                        attrs: { for: _vm.form.multipleImages }
+                        attrs: { for: _vm.product.images }
                       },
                       [_vm._v("Multiple Images")]
                     ),
@@ -43162,6 +43240,14 @@ var render = function() {
                       _c(
                         "a",
                         {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.activeCan,
+                              expression: "activeCan"
+                            }
+                          ],
                           attrs: { href: "product/" + product.slug + "/edit" }
                         },
                         [_vm._v("edit")]
@@ -57577,14 +57663,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context5.prev = _context5.next) {
               case 0:
                 _context5.next = 2;
-                return axios.get('/api/getProduct');
+                return axios.get('/getProduct');
 
               case 2:
                 data = _context5.sent.data;
                 context.commit('products', data.products);
                 context.commit('categories', data.categories);
+                context.commit('auth', data.auth);
 
-              case 5:
+              case 6:
               case "end":
                 return _context5.stop();
             }
@@ -57603,7 +57690,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 commit = _ref4.commit;
                 currentUrl = window.location.pathname;
                 _context6.next = 4;
-                return axios.get('/api/getProduct/add/' + currentUrl.substr(9)).then(function (_ref5) {
+                return axios.get('/getProduct/add/' + currentUrl.substr(9)).then(function (_ref5) {
                   var data = _ref5.data;
                   commit('product', data.product);
                 });
@@ -57626,7 +57713,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 commit = _ref6.commit;
                 currentUrl = window.location.pathname;
                 _context7.next = 4;
-                return axios.get('/api/getProduct/' + currentUrl.substr(9)).then(function (_ref7) {
+                return axios.get('/getProduct/' + currentUrl.substr(9)).then(function (_ref7) {
                   var data = _ref7.data;
                   commit('product', data[1]);
                   commit('categories', data.categories);
