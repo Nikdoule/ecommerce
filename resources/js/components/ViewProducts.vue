@@ -97,21 +97,20 @@ export default {
       slug: "",
       tableau: [],
       q: "",
-      products:{}
     };
   },
   mounted() {},
   created() {
-    this.$store.dispatch("allProductsFromDatabase");
-    axios.get("/getProduct").then(response => {
-      this.products = response.data.products;
-    });
     
+    this.$store.dispatch("allProductsFromDatabase");
   },
   computed: {
-    ...mapState(["categories", "rolesAuth"]),
+
+    ...mapState(["categories", "rolesAuth", "products"]),
     activeCan() {
+
       let showButton = false;
+
       for (const property in this.rolesAuth) {
         if (this.rolesAuth[property] == "super-admin" || this.rolesAuth[property] == "admin") {
           this.showButton = true;
@@ -122,21 +121,23 @@ export default {
   },
 
   methods: {
+
     getResults(page = 1) {
+
       axios.get("/getProduct?page=" + page).then(response => {
-        this.products = response.data.products;
+
+        this.$store.state.products = response.data.products;
+
       });
     },
     searchProduct() {
+
       axios.get("/getProduct?q=" + this.q).then(response => {
-        this.products = response.data.products;
+
+        this.$store.state.products = response.data.products;
       });
     }
   }
-
-  // getAllSlug() {
-  //   return this.$store.getters.getSlugFromGetters
-  // }
 };
 </script>
 

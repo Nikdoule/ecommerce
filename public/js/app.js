@@ -3197,20 +3197,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     return {
       slug: "",
       tableau: [],
-      q: "",
-      products: {}
+      q: ""
     };
   },
   mounted: function mounted() {},
   created: function created() {
-    var _this = this;
-
     this.$store.dispatch("allProductsFromDatabase");
-    axios.get("/getProduct").then(function (response) {
-      _this.products = response.data.products;
-    });
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(["categories", "rolesAuth"]), {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(["categories", "rolesAuth", "products"]), {
     activeCan: function activeCan() {
       var showButton = false;
 
@@ -3225,24 +3219,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   }),
   methods: {
     getResults: function getResults() {
-      var _this2 = this;
+      var _this = this;
 
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       axios.get("/getProduct?page=" + page).then(function (response) {
-        _this2.products = response.data.products;
+        _this.$store.state.products = response.data.products;
       });
     },
     searchProduct: function searchProduct() {
-      var _this3 = this;
+      var _this2 = this;
 
       axios.get("/getProduct?q=" + this.q).then(function (response) {
-        _this3.products = response.data.products;
+        _this2.$store.state.products = response.data.products;
       });
     }
-  } // getAllSlug() {
-  //   return this.$store.getters.getSlugFromGetters
-  // }
-
+  }
 });
 
 /***/ }),
@@ -57563,15 +57554,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, 0);
       return cTotal;
     },
+    //CategoriesProduct
     getCategoriesProductFromGetters: function getCategoriesProductFromGetters(state) {
       return state.categoriesProduct;
     },
+    //ProductCategories
     getProductsCategoriesFromGetters: function getProductsCategoriesFromGetters(state) {
       return state.productsCategories;
     },
+    //Categories
     getCategoriesFromGetters: function getCategoriesFromGetters(state) {
       return state.categories;
     },
+    //Profil_user
     getProfilUserFromGetters: function getProfilUserFromGetters(state) {
       return state.profilUser;
     },
@@ -57609,15 +57604,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   },
   mutations: {
+    //CategoriesProduct
     categoriesProduct: function categoriesProduct(state, data) {
       return state.categoriesProduct = data;
     },
+    //ProductsCategories
     productsCategories: function productsCategories(state, data) {
       return state.productsCategories = data;
     },
+    //Categories
     categories: function categories(state, data) {
       return state.categories = data;
     },
+    //Profil_user
     profilUser: function profilUser(state, data) {
       return state.profilUser = data;
     },
@@ -57629,7 +57628,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     roles: function roles(state, data) {
       return state.roles = data;
     },
-    //User
+    //Auth
     auth: function auth(state, data) {
       return state.rolesAuth = data;
     },
@@ -57637,6 +57636,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     user: function user(state, data) {
       return state.user = data;
     },
+    //Users
     users: function users(state, data) {
       return state.users = data;
     },
@@ -57654,21 +57654,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   },
   actions: {
-    allProfilFromDatabase: function allProfilFromDatabase(context) {
+    //Profil
+    allProfilFromDatabase: function allProfilFromDatabase(_ref2) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var data;
+        var commit;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
-                return axios.get("getProfil");
+                commit = _ref2.commit;
+                _context.next = 3;
+                return axios.get("getProfil").then(function (_ref3) {
+                  var data = _ref3.data;
+                  commit("profilUser", data.user);
+                });
 
-              case 2:
-                data = _context.sent.data;
-                context.commit("profilUser", data.user);
-
-              case 4:
+              case 3:
               case "end":
                 return _context.stop();
             }
@@ -57677,18 +57678,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     //User Roles Roles_user
-    editFromDatabase: function editFromDatabase(_ref2) {
+    editFromDatabase: function editFromDatabase(_ref4) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
         var commit, currentUrl;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                commit = _ref2.commit;
+                commit = _ref4.commit;
                 currentUrl = window.location.pathname;
                 _context2.next = 4;
-                return axios.get("/admin/getUsers/" + currentUrl.substr(13)).then(function (_ref3) {
-                  var data = _ref3.data;
+                return axios.get("/admin/getUsers/" + currentUrl.substr(13)).then(function (_ref5) {
+                  var data = _ref5.data;
                   commit("user", data.user);
                   commit("roles", data.roles);
                   commit("rolesUser", data.rolesUser);
@@ -57704,22 +57705,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     //Users
-    allUsersFromDatabase: function allUsersFromDatabase(context) {
+    allUsersFromDatabase: function allUsersFromDatabase(_ref6) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
-        var data;
+        var commit;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _context3.next = 2;
-                return axios.get("getUsers");
+                commit = _ref6.commit;
+                _context3.next = 3;
+                return axios.get("getUsers").then(function (_ref7) {
+                  var data = _ref7.data;
+                  commit("users", data.users);
+                  commit("auth", data.auth);
+                });
 
-              case 2:
-                data = _context3.sent.data;
-                context.commit("users", data.users);
-                context.commit("auth", data.auth);
-
-              case 5:
+              case 3:
               case "end":
                 return _context3.stop();
             }
@@ -57728,21 +57729,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     //Carts
-    allCartFromDatabase: function allCartFromDatabase(context) {
+    allCartFromDatabase: function allCartFromDatabase(_ref8) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
-        var data;
+        var commit;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _context4.next = 2;
-                return axios.get("/getCarts");
+                commit = _ref8.commit;
+                _context4.next = 3;
+                return axios.get("/getCarts").then(function (_ref9) {
+                  var data = _ref9.data;
+                  commit("carts", data.carts);
+                });
 
-              case 2:
-                data = _context4.sent.data;
-                context.commit("carts", data.carts);
-
-              case 4:
+              case 3:
               case "end":
                 return _context4.stop();
             }
@@ -57751,23 +57752,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     //Products
-    allProductsFromDatabase: function allProductsFromDatabase(context) {
+    allProductsFromDatabase: function allProductsFromDatabase(_ref10) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
-        var data;
+        var commit;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                _context5.next = 2;
-                return axios.get('/getProduct');
+                commit = _ref10.commit;
+                _context5.next = 3;
+                return axios.get('/getProduct').then(function (_ref11) {
+                  var data = _ref11.data;
+                  commit('products', data.products);
+                  commit('categories', data.categories);
+                  commit('auth', data.auth);
+                });
 
-              case 2:
-                data = _context5.sent.data;
-                context.commit('products', data.products);
-                context.commit('categories', data.categories);
-                context.commit('auth', data.auth);
-
-              case 6:
+              case 3:
               case "end":
                 return _context5.stop();
             }
@@ -57776,18 +57777,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     //Product
-    allProductFromDatabase: function allProductFromDatabase(_ref4) {
+    allProductFromDatabase: function allProductFromDatabase(_ref12) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6() {
         var commit, currentUrl;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
-                commit = _ref4.commit;
+                commit = _ref12.commit;
                 currentUrl = window.location.pathname;
                 _context6.next = 4;
-                return axios.get('/getProduct/add/' + currentUrl.substr(9)).then(function (_ref5) {
-                  var data = _ref5.data;
+                return axios.get('/getProduct/add/' + currentUrl.substr(9)).then(function (_ref13) {
+                  var data = _ref13.data;
                   commit('product', data.product);
                 });
 
@@ -57799,18 +57800,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee6);
       }))();
     },
-    editProductFromDatabase: function editProductFromDatabase(_ref6) {
+    editProductFromDatabase: function editProductFromDatabase(_ref14) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee7() {
         var commit, currentUrl;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee7$(_context7) {
           while (1) {
             switch (_context7.prev = _context7.next) {
               case 0:
-                commit = _ref6.commit;
+                commit = _ref14.commit;
                 currentUrl = window.location.pathname;
                 _context7.next = 4;
-                return axios.get('/getProduct/' + currentUrl.substr(9)).then(function (_ref7) {
-                  var data = _ref7.data;
+                return axios.get('/getProduct/' + currentUrl.substr(9)).then(function (_ref15) {
+                  var data = _ref15.data;
                   commit('product', data[1]);
                   commit('categories', data.categories);
                   commit('categoriesProduct', data.categoriesProduct);
@@ -57825,18 +57826,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     //Category
-    allCategoryFromDatabase: function allCategoryFromDatabase(_ref8) {
+    allCategoryFromDatabase: function allCategoryFromDatabase(_ref16) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee8() {
         var commit, currentUrl;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee8$(_context8) {
           while (1) {
             switch (_context8.prev = _context8.next) {
               case 0:
-                commit = _ref8.commit;
+                commit = _ref16.commit;
                 currentUrl = window.location.pathname;
                 _context8.next = 4;
-                return axios.get('/getCategory/' + currentUrl.substr(10)).then(function (_ref9) {
-                  var data = _ref9.data;
+                return axios.get('/getCategory/' + currentUrl.substr(10)).then(function (_ref17) {
+                  var data = _ref17.data;
                   commit('productsCategories', data.productByCategories);
                   commit('categories', data.categories);
                 });

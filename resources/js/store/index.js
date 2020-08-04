@@ -22,114 +22,89 @@ export default {
 
             return cTotal;
         },
-        getCategoriesProductFromGetters(state) {
+        //CategoriesProduct
+        getCategoriesProductFromGetters: state => state.categoriesProduct,
 
-            return state.categoriesProduct
-        },
-        getProductsCategoriesFromGetters(state) {
+        //ProductCategories
+        getProductsCategoriesFromGetters: state => state.productsCategories,
 
-            return state.productsCategories
-        },
-        getCategoriesFromGetters(state) {
+        //Categories
+        getCategoriesFromGetters: state => state.categories,
 
-            return state.categories
-        },
-        getProfilUserFromGetters(state) {
+        //Profil_user
+        getProfilUserFromGetters: state => state.profilUser,
 
-            return state.profilUser
-        },
         //Roles_user
-        getRolesUserFromGetters(state) {
+        getRolesUserFromGetters: state => state.rolesUser,
 
-            return state.rolesUser
-        },
         //Roles
-        getRolesFromGetters(state) {
+        getRolesFromGetters: state => state.roles,
 
-            return state.roles
-        },
         //Auth
-        getAuthFromGetters(state) {
+        getAuthFromGetters: state => state.rolesAuth,
 
-            return state.rolesAuth
-        },
         //User
-        getUserFromGetters(state) {
+        getUserFromGetters: state => state.user,
 
-            return state.user
-        },
         //Users
-        getUsersFromGetters(state) {
+        getUsersFromGetters: state => state.users,
 
-            return state.users
-        },
         //Carts
-        getCartFromGetters(state) {
+        getCartFromGetters: state => state.carts,
 
-            return state.carts
-        },
         //Products
-        getProductsFromGetters(state) {
+        getProductsFromGetters: state => state.products,
 
-            return state.products
-        },
         //Product
-        getProductFromGetters(state) {
-
-            return state.product
-        },
+        getProductFromGetters: state => state.product,
 
     },
     mutations: {
-        categoriesProduct(state, data) {
-            return state.categoriesProduct = data
-        },
-        productsCategories(state, data) {
-            return state.productsCategories = data
-        },
-        categories(state, data) {
-            return state.categories = data
-        },
-        profilUser(state, data) {
-            return state.profilUser = data
-        },
+        //CategoriesProduct
+        categoriesProduct : (state, data) => state.categoriesProduct = data,
+
+        //ProductsCategories
+        productsCategories : (state, data) => state.productsCategories = data,
+
+        //Categories
+        categories : (state, data) => state.categories = data,
+
+        //Profil_user
+        profilUser : (state, data) => state.profilUser = data,
+
         //Roles_user
-        rolesUser(state, data) {
-            return state.rolesUser = data
-        },
+        rolesUser : (state, data) => state.rolesUser = data,
+
         //Roles
-        roles(state, data) {
-            return state.roles = data
-        },
+        roles : (state, data) => state.roles = data,
+
+        //Auth
+        auth : (state, data) => state.rolesAuth = data,
+
         //User
-        auth(state, data) {
-            return state.rolesAuth = data
-        },
-        //User
-        user(state, data) {
-            return state.user = data
-        },
-        users(state, data) {
-            return state.users = data
-        },
+        user: (state, data) => state.user = data,
+
+        //Users
+        users: (state, data) => state.users = data,
+
         //Carts
-        carts(state, data) {
-            return state.carts = data
-        },
+        carts: (state, data) => state.carts = data,
+
         //Products
-        products(state, data) {
-            return state.products = data
-        },
+        products: (state, data) => state.products = data,
+        
         //Product
-        product(state, data) {
-            return state.product = data
-        },
+        product: (state, data) => state.product = data,
     },
 
     actions: {
-        async allProfilFromDatabase(context) {
-            let data = (await axios.get("getProfil")).data;
-            context.commit("profilUser", data.user)
+        //Profil
+        async allProfilFromDatabase({commit}) {
+            await axios.get("getProfil")
+            .then(({data}) => {
+                commit("profilUser", data.user)
+            })
+            
         },
         //User Roles Roles_user
         async editFromDatabase({ commit }) {
@@ -144,22 +119,31 @@ export default {
             
         },
         //Users
-        async allUsersFromDatabase(context) {
-            let data = (await axios.get("getUsers")).data;
-            context.commit("users", data.users)
-            context.commit("auth", data.auth)
+        async allUsersFromDatabase({commit}) {
+            await axios.get("getUsers")
+            .then(({data}) => {
+                commit("users", data.users)
+                commit("auth", data.auth)
+            })
+            
         },
         //Carts
-        async allCartFromDatabase(context) {
-            let data = (await axios.get("/getCarts")).data;
-            context.commit("carts", data.carts)
+        async allCartFromDatabase({commit}) {
+            await axios.get("/getCarts")
+            .then(({data}) => {
+                commit("carts", data.carts)
+            })
+            
         },
         //Products
-        async allProductsFromDatabase(context) {
-            let data = (await axios.get('/getProduct')).data;
-            context.commit('products', data.products)
-            context.commit('categories', data.categories)
-            context.commit('auth', data.auth)
+        async allProductsFromDatabase({commit}) {
+            await axios.get('/getProduct')
+            .then(({data}) => {
+                commit('products', data.products)
+                commit('categories', data.categories)
+                commit('auth', data.auth)
+            })
+            
         },
         //Product
         async allProductFromDatabase({commit}) {
