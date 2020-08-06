@@ -43,6 +43,7 @@
                         </form>
                         @can('manage-users')
                         <a class="dropdown-item" href="{{ route('admin.users.index') }}">Listes des users</a>
+                        <a class="dropdown-item" href="{{ route('products.create') }}">Créer un article</a>
                         @endcan
                         <a class="dropdown-item" href="{{ route('edit.users') }}">Profil</a>
                     </div>

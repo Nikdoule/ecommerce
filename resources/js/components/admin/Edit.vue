@@ -46,7 +46,7 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("editFromDatabase");
+    this.$store.dispatch("editUserFromDatabase");
   },
   computed: {
     getUser() {

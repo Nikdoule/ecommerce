@@ -43,17 +43,23 @@ Route::middleware('auth')->middleware('verified')->group(function(){
     //View products
     Route::get('/', 'Products\ProductsController@VIEW_INDEX')->name('products.index');
 
-    Route::get('/product/{slug}', 'Products\ProductsController@VIEW_SHOW');
+    Route::get('/product/create', 'Products\ProductsController@VIEW_CREATE')->name('products.create');
 
-    Route::get('/product/{product}/edit', 'Products\ProductsController@VIEW_EDIT');
+    Route::get('/product/{slug}', 'Products\ProductsController@VIEW_SHOW')->name('products.show');
 
-    Route::get('/getProduct/add/{slug}', 'Products\ProductsController@show');
+    Route::get('/product/{product}/edit', 'Products\ProductsController@VIEW_EDIT')->name('products.edit');
 
-    Route::get('/getProduct/{slug}/edit', 'Products\ProductsController@edit');
+    Route::get('/getProduct/add/{slug}', 'Products\ProductsController@show')->name('products.show.controller');
 
-    Route::patch('/getProduct/{product}', 'Products\ProductsController@update');
+    Route::get('/getProduct/{slug}/edit', 'Products\ProductsController@edit')->name('products.edit.controller');
+
+    Route::patch('/getProduct/{product}', 'Products\ProductsController@update')->name('products.update.controller');
     
-    Route::get('/getProduct', 'Products\ProductsController@index');
+    Route::get('/getProduct', 'Products\ProductsController@index')->name('products.index.controller');
+
+    Route::get('/getProduct/create', 'Products\ProductsController@create')->name('products.create.controller');
+
+    Route::post('/getProduct', 'Products\ProductsController@store')->name('products.store.controller');
 
     //view cart
     Route::get('/cart', 'CartController@VIEW_INDEX')->name('carts.index');

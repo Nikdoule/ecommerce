@@ -99,7 +99,7 @@ export default {
 
     actions: {
         //Profil
-        async allProfilFromDatabase({commit}) {
+        async profilFromDatabase({commit}) {
             await axios.get("getProfil")
             .then(({data}) => {
                 commit("profilUser", data.user)
@@ -107,7 +107,7 @@ export default {
             
         },
         //User Roles Roles_user
-        async editFromDatabase({ commit }) {
+        async editUserFromDatabase({ commit }) {
             let currentUrl = window.location.pathname;
             await axios.get("/admin/getUsers/" + currentUrl.substr(13))
             .then(({ data }) => {
@@ -146,7 +146,7 @@ export default {
             
         },
         //Product
-        async allProductFromDatabase({commit}) {
+        async productFromDatabase({commit}) {
             let currentUrl = window.location.pathname;
             await axios.get('/getProduct/add/' + currentUrl.substr(9))
             .then(({data}) => {
@@ -164,8 +164,15 @@ export default {
             })
             
         },
+        async createProductFromDatabase({commit}) {
+            await axios.get('/getProduct/create')
+            .then(({data}) => {
+                commit('categories', data.categories)
+            })
+            
+        },
         //Category
-        async allCategoryFromDatabase({commit}) {
+        async categoryFromDatabase({commit}) {
             let currentUrl = window.location.pathname;
             await axios.get('/getCategory/' + currentUrl.substr(10))
             .then(({data}) => {

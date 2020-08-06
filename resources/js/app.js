@@ -27,18 +27,27 @@ const store = new Vuex.Store(
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
-Vue.component('edit_admin-component', require('./components/Edit-user.vue').default);
-Vue.component('index_admin-component', require('./components/User-list.vue').default);
 
-Vue.component('edit_product-component', require('./components/EditProduct.vue').default);
-Vue.component('products-component', require('./components/ViewProducts.vue').default);
+//Admin
+Vue.component('edit_admin-component', require('./components/admin/Edit.vue').default);
+Vue.component('index_admin-component', require('./components/admin/Index.vue').default);
 
-Vue.component('product-component', require('./components/ViewProduct.vue').default);
-Vue.component('cart-component', require('./components/ViewCart.vue').default);
-Vue.component('profil-component', require('./components/EditAuthProfil.vue').default);
-Vue.component('category-component', require('./components/ProductPerCategory.vue').default);
-Vue.component('count-component', require('./components/CountCart.vue').default);
-Vue.component('image-component', require('./components/ImageProfil.vue').default);
+//Users
+Vue.component('profil-component', require('./components/users/Edit.vue').default);
+Vue.component('image-component', require('./components/users/ImageProfil.vue').default);
+
+//Products
+Vue.component('edit_product-component', require('./components/products/Edit.vue').default);
+Vue.component('products-component', require('./components/products/Index.vue').default);
+Vue.component('create_products-component', require('./components/products/Create.vue').default);
+Vue.component('product-component', require('./components/products/Show.vue').default);
+Vue.component('category-component', require('./components/products/Category.vue').default);
+
+//Cart
+Vue.component('count-component', require('./components/cart/Count.vue').default);
+Vue.component('cart-component', require('./components/cart/index.vue').default);
+
+//Pagination
 Vue.component('pagination', require('laravel-vue-pagination'));
 /**
  * Next, we will create a fresh Vue application instance and attach it to

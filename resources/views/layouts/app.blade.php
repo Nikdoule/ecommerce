@@ -39,6 +39,7 @@
             @yield('thankyou')
             @yield('category')
             @yield('edit-product')
+            @yield('create-product')
         </main>
     </div>
     @yield('extra-js')

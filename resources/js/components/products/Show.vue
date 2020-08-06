@@ -83,7 +83,7 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("allProductFromDatabase");
+    this.$store.dispatch("productFromDatabase");
   },
   computed: {
     formatSerialize() {

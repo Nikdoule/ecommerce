@@ -172,7 +172,7 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("allProfilFromDatabase");
+    this.$store.dispatch("profilFromDatabase");
   },
   computed: {
     ...mapState(["profilUser"]),

@@ -96,7 +96,7 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("allCategoryFromDatabase");
+    this.$store.dispatch("categoryFromDatabase");
   },
   computed: mapState(["productsCategories", "categories"]),
   methods: {

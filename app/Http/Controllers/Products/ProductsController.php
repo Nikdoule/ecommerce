@@ -20,6 +20,12 @@ class ProductsController extends Controller
         return view('products.index');
         
     }
+    public function VIEW_CREATE()
+    {
+        
+        return view('products.create');
+        
+    }
     public function VIEW_SHOW()
     {
         return view('products.show');
@@ -64,7 +70,17 @@ class ProductsController extends Controller
         }
         
     }
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $categories = Category::all();
 
+        return ['categories' => $categories];
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -73,7 +89,56 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     { 
-        //
+
+        $product = $request->validate([
+             'title' => 'required',
+             'description' => 'required',
+             'slug' => 'required',
+             'subtitle' => 'required',
+             'price' => 'required',
+             'image' => 'required',
+             'images' => 'required',
+         ]);
+        if(strlen($request->image) > 200)
+        {
+            $image = $request->get('image');
+            $name = time().'.jpg';
+            \Image::make($request->get('image'))->save(public_path('images/').$name);
+            $sendImage = '/images/'.$name;
+        }
+        if(is_array($request->images))
+        {
+            $tab = [];
+            $i = 0;
+            $images = $request->get('images');
+            foreach($images as $item)
+            {
+                
+                $names = time().'.jpg';
+
+                \Image::make($item)->save(public_path('images/').$i.''.$names);
+                array_push($tab, '/images/'.$i.''.$names);
+                
+                $i++;
+            }
+            
+            $sendImages = serialize($tab);
+        }
+        Product::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'slug' => $request->slug,
+            'subtitle' => $request->subtitle,
+            'price' => $request->price,
+            'image' => $sendImage,
+            'images' => $sendImages,
+            
+        ])->categories()->attach([
+            $request->category_id[0],
+            $request->category_id[1]
+        ]);
+
+        return response()->json(['Create product success']);
     }
 
     /**
