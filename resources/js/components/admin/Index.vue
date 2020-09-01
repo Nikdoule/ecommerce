@@ -81,6 +81,7 @@ export default {
   methods: {
     onDelete(userId, index) {
       axios.delete("getUsers/" + userId, userId).then(({ data }) => {
+        console.log(this.users)
         Vue.delete(this.users, index);
       });
     }

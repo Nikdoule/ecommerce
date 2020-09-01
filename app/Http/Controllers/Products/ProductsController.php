@@ -51,25 +51,47 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        if(request('q') != null) {
+         if(request('q') != null) {
 
-            $products['data'] = Product::where('title', 'like', '%' . request('q') . '%')->orWhere('description', 'like', '%' . request('q') . '%')->orWhere('subtitle', 'like', '%' . request('q') . '%')->inRandomOrder()->with('categories')->get();
+             $products['data'] = Product::where('title', 'like', '%' . request('q') . '%')->orWhere('description', 'like', '%' . request('q') . '%')->orWhere('subtitle', 'like', '%' . request('q') . '%')->inRandomOrder()->with('categories')->get();
 
-            return response()->json(['products' => $products], 200);
-        }else {
+             return response()->json(['products' => $products], 200);
+
+         }else if(request('selected') == 'a') {
+
+             $products['data'] = Product::orderBy('price')->with('categories')->get();
+
+             return response()->json(['products' => $products], 200);
+
+         }else if (request('selected') == 'b'){
+
+             $products['data'] = Product::orderByDesc('price')->with('categories')->get();
+
+             return response()->json(['products' => $products], 200);
+         }else {
             
-            $auth = Auth::user();
+             if(Auth::check()) {
 
-            $role_auth = $auth->roles->pluck('name');
+                 $auth = Auth::user();
 
-            $products = Product::with('categories')->inRandomOrder()->paginate(6);
+                 $role_auth = $auth->roles->pluck('name');
+
+                 $products = Product::with('categories')->inRandomOrder()->paginate(6);
             
-            $categories = Category::all();
+                 $categories = Category::all();
 
-            return ['products' => $products, 'categories' => $categories, 'auth' => $role_auth];
-        }
+                 return ['products' => $products, 'categories' => $categories, 'auth' => $role_auth];
+             }
+            
+
+             $products = Product::with('categories')->inRandomOrder()->paginate(6);
+            
+             $categories = Category::all();
+
+             return ['products' => $products, 'categories' => $categories];
+         }
         
-    }
+        }
     /**
      * Show the form for creating a new resource.
      *
@@ -133,10 +155,9 @@ class ProductsController extends Controller
             'image' => $sendImage,
             'images' => $sendImages,
             
-        ])->categories()->attach([
-            $request->category_id[0],
-            $request->category_id[1]
-        ]);
+        ])->categories()->sync(
+            $request->category_id
+        );
 
         return response()->json(['Create product success']);
     }
@@ -230,24 +251,35 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($product)
     {
-        //
+        $product = Product::find($product);
+
+        $product->delete();
     }
     public function getCategory($slug) {
 
+        $categoryWithSlug = Category::where('slug', $slug)->firstOrFail();
+
         if(request('q') != null) {
 
-            $categoryWithSlug = Category::where('slug', $slug)->firstOrFail();
-            
             $productByCategories['data'] = $categoryWithSlug->products()->with('categories')->where('title', 'like', '%' . request('q') . '%')->orWhere('description', 'like', '%' . request('q') . '%')->orWhere('subtitle', 'like', '%' . request('q') . '%')->inRandomOrder()->get();
+
+            return response()->json(['productByCategories' => $productByCategories], 200);
+        }else if(request('selected') == 'a') {
+
+            $productByCategories['data'] = $categoryWithSlug->products()->with('categories')->orderBy('price')->get();
+ 
+            return response()->json(['productByCategories' => $productByCategories], 200);
+
+        }else if (request('selected') == 'b'){
+
+            $productByCategories['data'] = $categoryWithSlug->products()->with('categories')->orderByDesc('price')->get();
 
             return response()->json(['productByCategories' => $productByCategories], 200);
         }else {
             $categories = Category::all();
 
-            $categoryWithSlug = Category::where('slug', $slug)->firstOrFail();
-    
             $productByCategories = $categoryWithSlug->products()->with('categories')->paginate(6);
     
             return response()->json(['productByCategories' => $productByCategories, 'categories' => $categories], 200);

@@ -29,14 +29,15 @@
             </div>
             <p class="card-text mb-auto">{{ product.price / 100 * form.product_qty }} €</p>
             <form @submit.prevent="onSubmit">
-              <div class="d-flex col-4 pl-0">
+              <div class="d-flex col-12 pl-0">
                 <button
                   v-show="addProductCart"
                   @click="form.product_id = product.id"
                   type="submit"
-                  class="btn btn-success col-10"
+                  class="btn btn-success"
                 >Ajouter au panier</button>
                 <select
+                  v-show="duplicate"
                   @change.prevent="onChange($event)"
                   v-model="form.product_qty"
                   name="qty"
@@ -52,7 +53,7 @@
                   >{{ count }}</option>
                 </select>
               </div>
-              <div class="d-flex col-4 pl-0 mt-3">
+              <div class="d-flex col-12 pl-0 mt-3">
                 <a :href="home" type="submit" class="btn btn-success">
                   <span>Continuer mes achats</span>
                 </a>

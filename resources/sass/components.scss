@@ -14,3 +14,14 @@
     width: 30px;
     border-radius: 50%;
 }
+
+.card {
+    height: 100vh;
+}
+.pagina{
+    width: 100vw;
+    position: fixed;
+    bottom: 0px;
+    display: flex;
+    justify-content: center; 
+}

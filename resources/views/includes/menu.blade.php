@@ -13,43 +13,44 @@
             <ul class="navbar-nav ml-auto">
                 <!-- Authentication Links -->
                 @guest
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                </li>
-                @if (Route::has('register'))
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                </li>
-                @endif
-                @else
-                
-                @if (Auth::user()->image && !Request::is('edit/users'))
-                <img src="{{asset(Auth::user()->image)}}" alt="client-avatar" class="user-img">
-                @endif
-                <image-component></image-component>
-                <li class="nav-item dropdown">
-                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                        {{ Auth::user()->last_name }} <span class="caret"></span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                            {{ __('Logout') }}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                    </li>
+                    @if (Route::has('register'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                        </li>
+                    @endif
+                    @else
+                    
+                    @if (Auth::user()->image && !Request::is('edit/users'))
+                        <img src="{{asset(Auth::user()->image)}}" alt="client-avatar" class="user-img">
+                    @endif
+                    <image-component></image-component>
+                    <li class="nav-item dropdown">
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            {{ Auth::user()->last_name }} <span class="caret"></span>
                         </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                                        document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
+                            </a>
 
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                        @can('manage-users')
-                        <a class="dropdown-item" href="{{ route('admin.users.index') }}">Listes des users</a>
-                        <a class="dropdown-item" href="{{ route('products.create') }}">Créer un article</a>
-                        @endcan
-                        <a class="dropdown-item" href="{{ route('edit.users') }}">Profil</a>
-                    </div>
-                </li>
-                <count-component></count-component>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                            @can('manage-users')
+                            <a class="dropdown-item" href="{{ route('admin.users.index') }}">Listes des users</a>
+                            <a class="dropdown-item" href="{{ route('products.create') }}">Créer un article</a>
+                            @endcan
+                            <a class="dropdown-item" href="{{ route('edit.users') }}">Profil</a>
+                        </div>
+                    </li>
+                    
                 @endguest
+                <count-component></count-component>
             </ul>
         </div>
     </div>

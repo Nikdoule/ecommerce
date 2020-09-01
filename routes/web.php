@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+//User
 Route::middleware('auth')->middleware('verified')->group(function(){
     
     //Controller admin
@@ -41,38 +41,18 @@ Route::middleware('auth')->middleware('verified')->group(function(){
     });
 
     //View products
-    Route::get('/', 'Products\ProductsController@VIEW_INDEX')->name('products.index');
-
     Route::get('/product/create', 'Products\ProductsController@VIEW_CREATE')->name('products.create');
-
-    Route::get('/product/{slug}', 'Products\ProductsController@VIEW_SHOW')->name('products.show');
 
     Route::get('/product/{product}/edit', 'Products\ProductsController@VIEW_EDIT')->name('products.edit');
 
-    Route::get('/getProduct/add/{slug}', 'Products\ProductsController@show')->name('products.show.controller');
-
+    //Controller products
     Route::get('/getProduct/{slug}/edit', 'Products\ProductsController@edit')->name('products.edit.controller');
 
     Route::patch('/getProduct/{product}', 'Products\ProductsController@update')->name('products.update.controller');
     
-    Route::get('/getProduct', 'Products\ProductsController@index')->name('products.index.controller');
-
     Route::get('/getProduct/create', 'Products\ProductsController@create')->name('products.create.controller');
 
     Route::post('/getProduct', 'Products\ProductsController@store')->name('products.store.controller');
-
-    //view cart
-    Route::get('/cart', 'CartController@VIEW_INDEX')->name('carts.index');
-    
-    //Controller carts
-
-    Route::get('/getCarts', 'CartController@index');
-
-    Route::post('/cart/add', 'CartController@store')->name('cart.store');
-
-    Route::patch('/cart/{rowId}', 'CartController@update')->name('cart.update');
-
-    Route::delete('/cart/{rowId}', 'CartController@destroy')->name('cart.destroy');
 
     //Controller payement
 
@@ -82,10 +62,40 @@ Route::middleware('auth')->middleware('verified')->group(function(){
 
     Route::get('/thankyou', 'CheckoutController@thankYou')->name('checkout.thankYou');
 
-    Route::get('/getCategory/{slug}' , 'Products\ProductsController@getCategory');
-
-    Route::get('/category/{slug}', 'Products\ProductsController@VIEW_CATEGORY');
+    
     
 });
+//Guest
+
+//View products
+Route::get('/', 'Products\ProductsController@VIEW_INDEX')->name('products.index');
+
+Route::get('/product/{slug}', 'Products\ProductsController@VIEW_SHOW')->name('products.show');
+
+//View categories
+Route::get('/category/{slug}', 'Products\ProductsController@VIEW_CATEGORY');
+
+//Controller categories
+Route::get('/getCategory/{slug}' , 'Products\ProductsController@getCategory');
+
+//Controller products
+Route::get('/getProduct', 'Products\ProductsController@index')->name('products.index.controller');
+
+Route::get('/getProduct/add/{slug}', 'Products\ProductsController@show')->name('products.show.controller');
+
+Route::delete('/getProduct/{product}', 'Products\ProductsController@destroy')->name('products.destroy.controller');
+
+//view cart
+Route::get('/cart', 'CartController@VIEW_INDEX')->name('carts.index');
+    
+//Controller carts
+Route::get('/getCarts', 'CartController@index');
+
+Route::post('/cart/add', 'CartController@store')->name('cart.store');
+
+Route::patch('/cart/{rowId}', 'CartController@update')->name('cart.update');
+
+Route::delete('/cart/{rowId}', 'CartController@destroy')->name('cart.destroy');
 
 Auth::routes(['verify' => true]);
+

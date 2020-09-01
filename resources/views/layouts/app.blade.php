@@ -24,11 +24,11 @@
 
 <body>
     <div id="app">
-        
         <main>
             @yield('verify')
             @yield('register')
             @yield('login')
+            @yield('content')
             @yield('products')
             @yield('users')
             @yield('edit-user')

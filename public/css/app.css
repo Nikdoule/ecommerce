@@ -1,5 +1,15 @@
 @import url(https://fonts.googleapis.com/css?family=Nunito);@charset "UTF-8";
 
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  height: 100vh;
+}
+
 .svg {
   width: 25px;
   height: 25px;
@@ -21,6 +31,18 @@
   height: 30px;
   width: 30px;
   border-radius: 50%;
+}
+
+.card {
+  height: 100vh;
+}
+
+.pagina {
+  width: 100vw;
+  position: fixed;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
 }
 
 /*!

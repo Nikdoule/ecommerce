@@ -1,9 +1,9 @@
 @extends('layouts.app')
-
+@include('includes.menu')
 @section('login')
-<div class="container">
+<div>
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">{{ __('Login') }}</div>
 
