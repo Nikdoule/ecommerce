@@ -33,7 +33,7 @@
                     <!-- Elements will create input elements here -->
                 </div>
                 <div id="card-errors" role="alert"></div>
-                <button class="btn btn-success mt-4" id="submit">Pay now({{ getPrice( Cart::total()) }})</button>
+                <button class="btn btn-success mt-4" id="submit">Pay now({{ getPrice( $total) }})</button>
             </form>
         </div>
     </div>

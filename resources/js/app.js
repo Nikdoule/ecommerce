@@ -46,7 +46,8 @@ Vue.component('category-component', require('./components/products/Category.vue'
 //Cart
 Vue.component('count-component', require('./components/cart/Count.vue').default);
 Vue.component('cart-component', require('./components/cart/index.vue').default);
-
+//code
+Vue.component('create_code-component', require('./components/code/Index.vue').default);
 //Pagination
 Vue.component('pagination', require('laravel-vue-pagination'));
 /**

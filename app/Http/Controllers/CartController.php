@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Code;
 use App\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -26,8 +27,10 @@ class CartController extends Controller
         $subTotal = Cart::subtotal();
         $subTotal = floatval($subTotal);
         $subTotal = number_format($subTotal, 2, '.', '') / 100;
+        $code = Code::all();
+        $total = Cart::total();
         
-        return ['carts' => $carts];
+        return ['carts' => $carts, 'code' => $code, 'total' => $total];
     }
     /**
      * Show the form for creating a new resource.
@@ -104,7 +107,7 @@ class CartController extends Controller
         }
 
         Cart::update($rowId, $data['qty']);
-        
+
         return $data;
     }
 

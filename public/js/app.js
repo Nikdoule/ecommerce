@@ -2329,48 +2329,167 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      reduction: "",
       invisibleBody: true,
       selected: false,
       counts: 5,
       form: {
-        qty: ""
+        qty: "",
+        code: ""
+      },
+      tab: {
+        name: '',
+        code: ''
       }
     };
   },
   created: function created() {
     this.$store.dispatch("allCartFromDatabase");
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(["carts"]), {
-    total: function total() {
-      var total = Object.values(this.carts).reduce(function (t, _ref) {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(["carts", "code", "toto"]), {
+    subTotal: function subTotal() {
+      var sum = Object.values(this.carts).reduce(function (t, _ref) {
         var subtotal = _ref.subtotal;
         return t + subtotal;
       }, 0);
-      return parseFloat(total);
+      return parseFloat(sum);
+    },
+    total: function total() {
+      var sum = this.subTotal + 0.2 * this.subTotal;
+
+      if (this.verifCode) {
+        var discount = sum * this.code.discount / 100;
+        sum = sum - discount;
+        return sum.toFixed(2);
+      } else {
+        return sum.toFixed(2);
+      }
+    },
+    verifCode: function verifCode() {
+      var goodCode = false;
+
+      if (this.code.name == this.reduction) {
+        goodCode = true;
+        return goodCode;
+      } else {
+        return goodCode;
+      }
     }
   }),
   methods: {
+    onCode: function onCode() {
+      var _this = this;
+
+      axios.post("/getCode", this.tab).then(function (_ref2) {
+        var data = _ref2.data;
+
+        if (_this.code.name == _this.tab.code) {
+          _this.reduction = _this.tab.code;
+          console.log("ok");
+        } else {
+          console.log("not ok");
+        }
+      });
+    },
     onChange: function onChange(event, rowId) {
       this.form.qty = event.target.value;
-      axios.patch("/cart/" + this.rowId, this.form).then(function (_ref2) {
-        var data = _ref2.data;
+      axios.patch("/cart/" + this.rowId, this.form).then(function (_ref3) {
+        var data = _ref3.data;
       });
     },
     onDelete: function onDelete(index) {
+      var _this2 = this;
+
+      axios["delete"]("/cart/" + index, index).then(function (_ref4) {
+        var data = _ref4.data;
+        Vue["delete"](_this2.carts, index);
+
+        if (Object.keys(_this2.carts).length == 0) {
+          location.href = "/";
+          _this2.invisibleBody = false;
+        }
+      });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/code/Index.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/code/Index.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      createOk: false,
+      form: {
+        name: '',
+        discount: ''
+      }
+    };
+  },
+  methods: {
+    onSubmit: function onSubmit() {
       var _this = this;
 
-      axios["delete"]("/cart/" + index, index).then(function (_ref3) {
-        var data = _ref3.data;
-        Vue["delete"](_this.carts, index);
-
-        if (Object.keys(_this.carts).length == 0) {
-          location.href = "/";
-          _this.invisibleBody = false;
-        }
+      axios.post("/getCode", this.form).then(function (_ref) {
+        var data = _ref.data;
+        _this.changeOk = true;
       });
     }
   }
@@ -41645,7 +41764,85 @@ var render = function() {
             "div",
             { staticClass: "row py-5 p-4 bg-white rounded shadow-sm" },
             [
-              _vm._m(1),
+              _c("div", { staticClass: "col-lg-6" }, [
+                _c(
+                  "div",
+                  {
+                    staticClass:
+                      "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
+                  },
+                  [_vm._v("Coupon code")]
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "p-4" }, [
+                  _c("p", { staticClass: "font-italic mb-4" }, [
+                    _vm._v(
+                      "If you have a coupon code, please enter it in the box below"
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "form",
+                    {
+                      on: {
+                        submit: function($event) {
+                          $event.preventDefault()
+                          return _vm.onCode($event)
+                        }
+                      }
+                    },
+                    [
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "input-group mb-4 border rounded-pill p-2"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.tab.code,
+                                expression: "tab.code"
+                              }
+                            ],
+                            staticClass: "form-control border-0",
+                            attrs: {
+                              type: "text",
+                              placeholder: "Apply coupon",
+                              "aria-describedby": "button-addon3"
+                            },
+                            domProps: { value: _vm.tab.code },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(_vm.tab, "code", $event.target.value)
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm._m(1)
+                        ]
+                      )
+                    ]
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass:
+                      "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
+                  },
+                  [_vm._v("Instructions for seller")]
+                ),
+                _vm._v(" "),
+                _vm._m(2)
+              ]),
               _vm._v(" "),
               _c("div", { staticClass: "col-lg-6" }, [
                 _c(
@@ -41665,37 +41862,108 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("ul", { staticClass: "list-unstyled mb-4" }, [
-                    _c(
-                      "li",
-                      {
-                        staticClass:
-                          "d-flex justify-content-between py-3 border-bottom"
-                      },
-                      [
-                        _c("strong", { staticClass: "text-muted" }, [
-                          _vm._v("Subtotal")
-                        ]),
-                        _vm._v(" "),
-                        _c("strong", [_vm._v(_vm._s(_vm.total) + "€")])
-                      ]
-                    ),
+                    _vm.verifCode
+                      ? _c(
+                          "li",
+                          {
+                            staticClass:
+                              "d-flex justify-content-between py-3 border-bottom"
+                          },
+                          [
+                            _c("strong", { staticClass: "text-muted" }, [
+                              _vm._v("Réduction")
+                            ]),
+                            _vm._v(" "),
+                            _c("strong", [
+                              _vm._v(_vm._s(_vm.code.discount) + "%")
+                            ])
+                          ]
+                        )
+                      : _vm._e(),
                     _vm._v(" "),
-                    _c(
-                      "li",
-                      {
-                        staticClass:
-                          "d-flex justify-content-between py-3 border-bottom"
-                      },
-                      [
-                        _c("strong", { staticClass: "text-muted" }, [
-                          _vm._v("Tax")
-                        ]),
-                        _vm._v(" "),
-                        _c("strong", [
-                          _vm._v(_vm._s((0.2 * _vm.total).toFixed(2)) + "€")
-                        ])
-                      ]
-                    ),
+                    _vm.verifCode
+                      ? _c(
+                          "li",
+                          {
+                            staticClass:
+                              "d-flex justify-content-between py-3 border-bottom"
+                          },
+                          [
+                            _c("strong", { staticClass: "text-muted" }, [
+                              _vm._v("Subtotal")
+                            ]),
+                            _vm._v(" "),
+                            _c("strong", [
+                              _vm._v(
+                                _vm._s(
+                                  (
+                                    (_vm.subTotal * _vm.code.discount) /
+                                    100
+                                  ).toFixed(2)
+                                ) + "€"
+                              )
+                            ])
+                          ]
+                        )
+                      : _c(
+                          "li",
+                          {
+                            staticClass:
+                              "d-flex justify-content-between py-3 border-bottom"
+                          },
+                          [
+                            _c("strong", { staticClass: "text-muted" }, [
+                              _vm._v("Subtotal")
+                            ]),
+                            _vm._v(" "),
+                            _c("strong", [
+                              _vm._v(_vm._s(_vm.subTotal.toFixed(2)) + "€")
+                            ])
+                          ]
+                        ),
+                    _vm._v(" "),
+                    _vm.verifCode
+                      ? _c(
+                          "li",
+                          {
+                            staticClass:
+                              "d-flex justify-content-between py-3 border-bottom"
+                          },
+                          [
+                            _c("strong", { staticClass: "text-muted" }, [
+                              _vm._v("Tax")
+                            ]),
+                            _vm._v(" "),
+                            _c("strong", [
+                              _vm._v(
+                                _vm._s(
+                                  (
+                                    (0.2 * _vm.subTotal * _vm.code.discount) /
+                                    100
+                                  ).toFixed(2)
+                                ) + "€"
+                              )
+                            ])
+                          ]
+                        )
+                      : _c(
+                          "li",
+                          {
+                            staticClass:
+                              "d-flex justify-content-between py-3 border-bottom"
+                          },
+                          [
+                            _c("strong", { staticClass: "text-muted" }, [
+                              _vm._v("Tax")
+                            ]),
+                            _vm._v(" "),
+                            _c("strong", [
+                              _vm._v(
+                                _vm._s((0.2 * _vm.subTotal).toFixed(2)) + "€"
+                              )
+                            ])
+                          ]
+                        ),
                     _vm._v(" "),
                     _c(
                       "li",
@@ -41708,12 +41976,13 @@ var render = function() {
                           _vm._v("Total")
                         ]),
                         _vm._v(" "),
-                        _c("h5", { staticClass: "font-weight-bold" }, [
-                          _vm._v(
-                            _vm._s((_vm.total + 0.2 * _vm.total).toFixed(2)) +
-                              "€"
-                          )
-                        ])
+                        _vm.verifCode
+                          ? _c("h5", { staticClass: "font-weight-bold" }, [
+                              _vm._v(_vm._s(_vm.total) + "€")
+                            ])
+                          : _c("h5", { staticClass: "font-weight-bold" }, [
+                              _vm._v(_vm._s(_vm.total) + "€")
+                            ])
                       ]
                     )
                   ]),
@@ -41784,71 +42053,177 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-lg-6" }, [
+    return _c("div", { staticClass: "input-group-append border-0" }, [
       _c(
-        "div",
+        "button",
         {
-          staticClass:
-            "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
+          staticClass: "btn btn-dark px-4 rounded-pill",
+          attrs: { id: "button-addon3", type: "submit" }
         },
-        [_vm._v("Coupon code")]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "p-4" }, [
-        _c("p", { staticClass: "font-italic mb-4" }, [
-          _vm._v("If you have a coupon code, please enter it in the box below")
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "input-group mb-4 border rounded-pill p-2" }, [
-          _c("input", {
-            staticClass: "form-control border-0",
-            attrs: {
-              type: "text",
-              placeholder: "Apply coupon",
-              "aria-describedby": "button-addon3"
-            }
-          }),
-          _vm._v(" "),
-          _c("div", { staticClass: "input-group-append border-0" }, [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-dark px-4 rounded-pill",
-                attrs: { id: "button-addon3", type: "button" }
-              },
-              [
-                _c("i", { staticClass: "fa fa-gift mr-2" }),
-                _vm._v("\n                  Valider\n                ")
-              ]
-            )
-          ])
-        ])
+        [
+          _c("i", { staticClass: "fa fa-gift mr-2" }),
+          _vm._v("\n                    Valider\n                  ")
+        ]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "p-4" }, [
+      _c("p", { staticClass: "font-italic mb-4" }, [
+        _vm._v(
+          "If you have some information for the seller you can leave them in the box below"
+        )
       ]),
       _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass:
-            "bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
-        },
-        [_vm._v("Instructions for seller")]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "p-4" }, [
-        _c("p", { staticClass: "font-italic mb-4" }, [
-          _vm._v(
-            "If you have some information for the seller you can leave them in the box below"
-          )
-        ]),
-        _vm._v(" "),
-        _c("textarea", {
-          staticClass: "form-control",
-          attrs: { name: "", cols: "30", rows: "2" }
-        })
-      ])
+      _c("textarea", {
+        staticClass: "form-control",
+        attrs: { name: "", cols: "30", rows: "2" }
+      })
     ])
   }
 ]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/code/Index.vue?vue&type=template&id=6b5b1e9b&scoped=true&":
+/*!*************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/code/Index.vue?vue&type=template&id=6b5b1e9b&scoped=true& ***!
+  \*************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("div", [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-md-8" }, [
+            _c(
+              "div",
+              {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.createOk,
+                    expression: "createOk"
+                  }
+                ],
+                staticClass: "alert alert-success mt-3"
+              },
+              [_vm._v("La création du code est un succès!")]
+            ),
+            _vm._v(" "),
+            _c("div", { staticClass: "card mt-3" }, [
+              _c("div", { staticClass: "card-header" }, [
+                _vm._v("Création d'un code")
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body" }, [
+                _c(
+                  "form",
+                  {
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        return _vm.onSubmit($event)
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "label",
+                      {
+                        staticClass: "form-check-label",
+                        attrs: { for: _vm.form.name }
+                      },
+                      [_vm._v("Code")]
+                    ),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.form.name,
+                          expression: "form.name"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        for: _vm.form.discount,
+                        id: "name",
+                        type: "text"
+                      },
+                      domProps: { value: _vm.form.name },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.form, "name", $event.target.value)
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("label", { staticClass: "form-check-label" }, [
+                      _vm._v("Discount")
+                    ]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.form.discount,
+                          expression: "form.discount"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { id: "number", type: "text" },
+                      domProps: { value: _vm.form.discount },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.form, "discount", $event.target.value)
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary mt-3",
+                        attrs: { type: "submit" }
+                      },
+                      [_vm._v("Create code")]
+                    )
+                  ]
+                )
+              ])
+            ])
+          ])
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -57478,7 +57853,9 @@ Vue.component('product-component', __webpack_require__(/*! ./components/products
 Vue.component('category-component', __webpack_require__(/*! ./components/products/Category.vue */ "./resources/js/components/products/Category.vue")["default"]); //Cart
 
 Vue.component('count-component', __webpack_require__(/*! ./components/cart/Count.vue */ "./resources/js/components/cart/Count.vue")["default"]);
-Vue.component('cart-component', __webpack_require__(/*! ./components/cart/index.vue */ "./resources/js/components/cart/index.vue")["default"]); //Pagination
+Vue.component('cart-component', __webpack_require__(/*! ./components/cart/index.vue */ "./resources/js/components/cart/index.vue")["default"]); //code
+
+Vue.component('create_code-component', __webpack_require__(/*! ./components/code/Index.vue */ "./resources/js/components/code/Index.vue")["default"]); //Pagination
 
 Vue.component('pagination', __webpack_require__(/*! laravel-vue-pagination */ "./node_modules/laravel-vue-pagination/dist/laravel-vue-pagination.common.js"));
 /**
@@ -57810,6 +58187,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_0ddc282e_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_template_id_0ddc282e_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/code/Index.vue":
+/*!************************************************!*\
+  !*** ./resources/js/components/code/Index.vue ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Index_vue_vue_type_template_id_6b5b1e9b_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Index.vue?vue&type=template&id=6b5b1e9b&scoped=true& */ "./resources/js/components/code/Index.vue?vue&type=template&id=6b5b1e9b&scoped=true&");
+/* harmony import */ var _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Index.vue?vue&type=script&lang=js& */ "./resources/js/components/code/Index.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Index_vue_vue_type_template_id_6b5b1e9b_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Index_vue_vue_type_template_id_6b5b1e9b_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "6b5b1e9b",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/code/Index.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/code/Index.vue?vue&type=script&lang=js&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/components/code/Index.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/code/Index.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/code/Index.vue?vue&type=template&id=6b5b1e9b&scoped=true&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/js/components/code/Index.vue?vue&type=template&id=6b5b1e9b&scoped=true& ***!
+  \*******************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_6b5b1e9b_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Index.vue?vue&type=template&id=6b5b1e9b&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/code/Index.vue?vue&type=template&id=6b5b1e9b&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_6b5b1e9b_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Index_vue_vue_type_template_id_6b5b1e9b_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -58346,7 +58792,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     profilUser: {},
     categories: [],
     productsCategories: {},
-    categoriesProduct: []
+    categoriesProduct: [],
+    code: {},
+    toto: ''
   },
   getters: {
     getTotal: function getTotal(state) {
@@ -58403,6 +58851,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     //Product
     getProductFromGetters: function getProductFromGetters(state) {
       return state.product;
+    },
+    //Code
+    getCodeFromGetters: function getCodeFromGetters(state) {
+      return state.code;
+    },
+    //Total
+    getTotoFromGetters: function getTotoFromGetters(state) {
+      return state.toto;
     }
   },
   mutations: {
@@ -58453,6 +58909,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     //Product
     product: function product(state, data) {
       return state.product = data;
+    },
+    //Code
+    code: function code(state, data) {
+      return state.code = data;
+    },
+    //total
+    toto: function toto(state, data) {
+      return state.toto = data;
     }
   },
   actions: {
@@ -58543,6 +59007,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return axios.get("/getCarts").then(function (_ref9) {
                   var data = _ref9.data;
                   commit("carts", data.carts);
+                  commit("code", data.code[0]);
+                  commit("toto", data.total);
                 });
 
               case 3:

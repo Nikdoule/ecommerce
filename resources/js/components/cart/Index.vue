@@ -88,20 +88,23 @@
               <p
                 class="font-italic mb-4"
               >If you have a coupon code, please enter it in the box below</p>
-              <div class="input-group mb-4 border rounded-pill p-2">
-                <input
-                  type="text"
-                  placeholder="Apply coupon"
-                  aria-describedby="button-addon3"
-                  class="form-control border-0"
-                />
-                <div class="input-group-append border-0">
-                  <button id="button-addon3" type="button" class="btn btn-dark px-4 rounded-pill">
-                    <i class="fa fa-gift mr-2"></i>
-                    Valider
-                  </button>
+              <form @submit.prevent="onCode">
+                <div class="input-group mb-4 border rounded-pill p-2">
+                  <input
+                    type="text"
+                    v-model="tab.code"
+                    placeholder="Apply coupon"
+                    aria-describedby="button-addon3"
+                    class="form-control border-0"
+                  />
+                  <div class="input-group-append border-0">
+                    <button id="button-addon3" type="submit" class="btn btn-dark px-4 rounded-pill">
+                      <i class="fa fa-gift mr-2"></i>
+                      Valider
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </form>
             </div>
             <div
               class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold"
@@ -122,21 +125,32 @@
                 class="font-italic mb-4"
               >Shipping and additional costs are calculated based on values you have entered.</p>
               <ul class="list-unstyled mb-4">
-                <li class="d-flex justify-content-between py-3 border-bottom">
-                  <strong class="text-muted">Subtotal</strong>
-                  <strong>{{ total }}€</strong>
+                <li v-if="verifCode" class="d-flex justify-content-between py-3 border-bottom">
+                  <strong class="text-muted">Réduction</strong>
+                  <strong>{{ code.discount }}%</strong>
                 </li>
-                <!-- <li class="d-flex justify-content-between py-3 border-bottom">
-                  <strong class="text-muted">Shipping and handling</strong>
-                  <strong>$10.00</strong>
-                </li>-->
-                <li class="d-flex justify-content-between py-3 border-bottom">
+                <li v-if="verifCode" class="d-flex justify-content-between py-3 border-bottom">
+                  <strong class="text-muted">Subtotal</strong>
+                  <strong>{{ (subTotal * code.discount / 100).toFixed(2) }}€</strong>
+                </li>
+                <li v-else class="d-flex justify-content-between py-3 border-bottom">
+                  <strong class="text-muted">Subtotal</strong>
+                  <strong>{{ (subTotal).toFixed(2) }}€</strong>
+                </li>
+                <li v-if="verifCode" class="d-flex justify-content-between py-3 border-bottom">
                   <strong class="text-muted">Tax</strong>
-                  <strong>{{ (0.2 * total).toFixed(2) }}€</strong>
+                  <strong>{{ ((0.2 * subTotal) * code.discount / 100).toFixed(2) }}€</strong>
+                </li>
+                <li v-else class="d-flex justify-content-between py-3 border-bottom">
+                  <strong class="text-muted">Tax</strong>
+                  <strong>{{ (0.2 * subTotal).toFixed(2) }}€</strong>
                 </li>
                 <li class="d-flex justify-content-between py-3 border-bottom">
                   <strong class="text-muted">Total</strong>
-                  <h5 class="font-weight-bold">{{ (total+(0.2 * total)).toFixed(2) }}€</h5>
+
+                  <h5 v-if="verifCode" class="font-weight-bold">{{ total }}€</h5>
+
+                  <h5 v-else class="font-weight-bold">{{ total }}€</h5>
                 </li>
               </ul>
               <a href="/payment" class="btn btn-dark rounded-pill py-2 btn-block">Pay</a>
@@ -153,11 +167,17 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      reduction: "",
       invisibleBody: true,
       selected: false,
       counts: 5,
       form: {
-        qty: ""
+        qty: "",
+        code: "",
+      },
+      tab: {
+        name: '',
+        code: ''
       }
     };
   },
@@ -165,16 +185,49 @@ export default {
     this.$store.dispatch("allCartFromDatabase");
   },
   computed: {
-    ...mapState(["carts"]),
-    total: function() {
-      let total = Object.values(this.carts).reduce(
+    ...mapState(["carts", "code", "toto"]),
+    subTotal: function () {
+      let sum = Object.values(this.carts).reduce(
         (t, { subtotal }) => t + subtotal,
         0
       );
-      return parseFloat(total);
-    }
+      return parseFloat(sum);
+    },
+    total: function () {
+      let sum = this.subTotal + 0.2 * this.subTotal;
+
+      if (this.verifCode) {
+        let discount = (sum * this.code.discount) / 100;
+
+        sum = sum - discount;
+       
+        return sum.toFixed(2);
+      } else {
+        return sum.toFixed(2);
+      }
+    },
+    verifCode: function () {
+      let goodCode = false;
+      if (this.code.name == this.reduction) {
+        goodCode = true;
+
+        return goodCode;
+      } else {
+        return goodCode;
+      }
+    },
   },
   methods: {
+    onCode() {
+      axios.post("/getCode", this.tab).then(({ data }) => {
+        if (this.code.name == this.tab.code) {
+          this.reduction = this.tab.code;
+          console.log("ok");
+        } else {
+            console.log("not ok");
+          }
+      });
+    },
     onChange(event, rowId) {
       this.form.qty = event.target.value;
       axios.patch("/cart/" + this.rowId, this.form).then(({ data }) => {});
@@ -187,8 +240,8 @@ export default {
           this.invisibleBody = false;
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

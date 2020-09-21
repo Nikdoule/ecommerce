@@ -25,8 +25,16 @@ class CheckoutController extends Controller
         $carts = Cart::content();
         Stripe::setApiKey('sk_test_DxQmYlm9dRR4WFgZSpaTIDHY00CBGenURB');
 
+        if(request()->session()->has('coupon')) {
+
+            $total = (Cart::subtotal() - request()->session()->get('coupon')['remise']) + (Cart::subtotal() -request()->session()->get('coupon')['remise']) * (20 / 100);
+            Session::forget('coupon');
+
+        }else {
+            $total = Cart::total();
+        }
         $intent = PaymentIntent::create([
-            'amount' => round(Cart::total()),
+            'amount' => round($total),
             'currency' => 'eur',
             'metadata' => [
                 'userId' => Auth::user()->id,
@@ -36,7 +44,8 @@ class CheckoutController extends Controller
         $clientSecret = Arr::get($intent, 'client_secret');
 
         return view('checkout.index',[
-            'clientSecret' => $clientSecret
+            'clientSecret' => $clientSecret,
+            'total' => $total
         ]);
     }
 
@@ -47,7 +56,7 @@ class CheckoutController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -64,7 +73,7 @@ class CheckoutController extends Controller
         $order->payment_intent_id = $data['paymentIntent']['id'];
 
         $order->amount = $data['paymentIntent']['amount'];
-        
+
         $order->payment_created_at = (new DateTime())
             ->setTimestamp($data['paymentIntent']['created'])
             ->format('Y-m-d H:i:s');
@@ -96,9 +105,9 @@ class CheckoutController extends Controller
             return response()->json(['error' => 'payment Intent Error']);
         }
 
-        
+
     }
-    
+
     public function thankyou()
     {
         return Session::has('success') ? view('checkout.thankYou') : redirect()->route('products.index');

@@ -39,6 +39,11 @@ Route::middleware('auth')->middleware('verified')->group(function(){
         Route::get('/users', 'ProfilController@VIEW_EDIT');
         
     });
+    //View code
+    Route::get('/code/create', 'CodeController@VIEW_CREATE')->name('code.create');
+    
+    //Controller code
+    Route::post('/getCode', 'CodeController@store')->name('code.store.controller');
 
     //View products
     Route::get('/product/create', 'Products\ProductsController@VIEW_CREATE')->name('products.create');

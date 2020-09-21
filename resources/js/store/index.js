@@ -11,7 +11,9 @@ export default {
         profilUser: {},
         categories: [],
         productsCategories:{},
-        categoriesProduct:[]
+        categoriesProduct:[],
+        code: {},
+        toto:''
     },
 
     getters: {
@@ -58,6 +60,12 @@ export default {
         //Product
         getProductFromGetters: state => state.product,
 
+        //Code
+        getCodeFromGetters: state => state.code,
+
+        //Total
+        getTotoFromGetters: state => state.toto,
+
     },
     mutations: {
         //CategoriesProduct
@@ -95,6 +103,12 @@ export default {
         
         //Product
         product: (state, data) => state.product = data,
+
+        //Code
+        code: (state, data) => state.code = data,
+
+        //total
+        toto: (state, data) => state.toto = data,
     },
 
     actions: {
@@ -132,6 +146,8 @@ export default {
             await axios.get("/getCarts")
             .then(({data}) => {
                 commit("carts", data.carts)
+                commit("code", data.code[0])
+                commit("toto", data.total)
             })
             
         },
